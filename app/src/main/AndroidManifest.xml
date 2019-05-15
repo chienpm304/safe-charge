@@ -9,19 +9,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver
+            android:name=".RestartServiceWhenStopped"
+            android:enabled="true"
+            android:exported="true"></receiver>
 
-        <activity android:name=".SettingActivity"
+        <service
+            android:name=".RunInBackgroundService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".SettingActivity"
             android:label="Settings">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"
-                />
-
+                android:value=".MainActivity" />
         </activity>
 
-        <activity
-            android:name=".LockscreenActivity"
-            />
+        <activity android:name=".LockscreenActivity" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
