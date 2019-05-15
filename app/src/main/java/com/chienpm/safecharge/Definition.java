@@ -11,4 +11,5 @@ class Definition {
 
     public static final String PREF_KEY_FILE = "preference_key_file";
     public static final int SETUP_PASSWORD_INTENT_CODE = 20001;
+    public static final int MIN_PATTERN_LENGTH = 4;
 }

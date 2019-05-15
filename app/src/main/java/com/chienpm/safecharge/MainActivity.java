@@ -1,6 +1,9 @@
 package com.chienpm.safecharge;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -22,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnSetupPassword;
     TextView tvVoltage, tvTemperature, tvBatteryLevel;
 
-
+    private static int jobID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +33,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initViews();
-        registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+
+        startService(new Intent(this, RunInBackgroundService.class));
+
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(Intent.ACTION_POWER_CONNECTED);
+//        intentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+//        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+//
+//        registerReceiver(this.mBatInfoReceiver, intentFilter);
 
         updateBatteryInfo();
+
+//            Intent intent = new Intent(this, LockscreenActivity.class);
+//            intent.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_UNLOCK);
+//            startActivity(intent);
     }
 
     @Override
@@ -75,8 +90,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         checkPasswordStatus();
+
+        scheduleJob();
+
+
     }
 
+    private void scheduleJob() {
+        ComponentName componentName = new ComponentName(this,
+                ChargingDetectorService.class);
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+
+        JobInfo jobInfo = new JobInfo.Builder(jobID, componentName)
+                .setRequiresCharging(true)
+                .build();
+
+        jobScheduler.schedule(jobInfo);
+    }
 
 
     private void checkPasswordStatus() {
@@ -95,16 +126,26 @@ public class MainActivity extends AppCompatActivity {
         return (TextUtils.isEmpty(password));
     }
 
-    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-            int voltage = intent.getIntExtra("voltage", 0);
-            int temperature = intent.getIntExtra("temperature", 0);
-            tvBatteryLevel.setText("Battery Status: " + String.valueOf(level) + "%");
-            tvVoltage.setText("Battery Voltage: " + String.valueOf(voltage));
-            double temps = (double)temperature / 10;
-            tvTemperature.setText("Battery Temperature: " + String.valueOf(temps));
-        }
-    };
+//    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+//            int voltage = intent.getIntExtra("voltage", 0);
+//            int temperature = intent.getIntExtra("temperature", 0);
+//            tvBatteryLevel.setText("Battery Status: " + String.valueOf(level) + "%");
+//            tvVoltage.setText("Battery Voltage: " + String.valueOf(voltage));
+//            double temps = (double)temperature / 10;
+//            tvTemperature.setText("Battery Temperature: " + String.valueOf(temps));
+//
+//            if (intent.getAction().equals(Intent.ACTION_POWER_CONNECTED)) {
+//                Intent intent1 = new Intent(getApplicationContext(), LockscreenActivity.class);
+//                intent1.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_UNLOCK);
+//                startActivity(intent1);
+//            } else if(intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED)) {
+//                Intent intent2 = new Intent(getApplicationContext(), LockscreenActivity.class);
+//                intent2.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_UNLOCK);
+//                startActivity(intent2);
+//            }
+//        }
+//    };
 }
