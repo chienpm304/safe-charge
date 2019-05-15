@@ -30,6 +30,45 @@ public class LockscreenActivity extends AppCompatActivity {
 
     private int mMode;
 
+
+    Button leftButton, rightButton;
+    TextView tvTittle, tvWarrning;
+    CountDownTimer timer;
+    MediaPlayer mediaPlayer;
+
+    //TODO: update layout with specific mode
+    //TODO: modify text size
+    //TODO: process 2 modes remaining
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_lockscreen);
+
+        Intent intent = getIntent();
+        mMode = intent.getIntExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_UNLOCK);
+
+        mService = new RunInBackgroundService(this);
+        mServiceIntent = new Intent(this, mService.getClass());
+
+
+        if (!isMyServiceRunning(mService.getClass())) {
+            startService(mServiceIntent);
+        }
+
+        initViews();
+
+        updateScreenMode();
+
+        if(mMode == Definition.LOCKSCREEN_UNLOCK){
+            //TODO: lock the phone i want disable all physical button when in unlock mode
+
+            startCountDown();
+        }
+
+    }
+
     private PatternLockView mPatternLockView;
 
     private PatternLockViewListener mPatternLockViewListener = new PatternLockViewListener() {
@@ -93,50 +132,20 @@ public class LockscreenActivity extends AppCompatActivity {
         return TextUtils.equals(patternString, password);
     }
 
-    Button leftButton, rightButton;
-    TextView tvTittle, tvWarrning;
-    CountDownTimer timer;
-    MediaPlayer mediaPlayer;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lockscreen);
+    private void startCountDown() {
+        timer = new CountDownTimer(5000, 1000) {
+            @Override
+            public void onTick(long l) {
+                tvWarrning.setText("Alert in " + String.valueOf(l/1000) +"s");
+            }
 
-        Intent intent = getIntent();
-        mMode = intent.getIntExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_UNLOCK);
-
-        mService = new RunInBackgroundService(this);
-        mServiceIntent = new Intent(this, mService.getClass());
-
-
-        if (!isMyServiceRunning(mService.getClass())) {
-            startService(mServiceIntent);
-        }
-
-        initViews();
-
-        updateScreenMode();
-
-        if(mMode == Definition.LOCKSCREEN_UNLOCK){
-            //TODO: lock the phone
-
-            //TODO: start service countdown to alarm:
-            timer = new CountDownTimer(5000, 1000) {
-                @Override
-                public void onTick(long l) {
-                    tvWarrning.setText("Alert in " + String.valueOf(l/1000) +"s");
-                }
-
-                @Override
-                public void onFinish() {
-                    //TODO: open alarm
-                    tvWarrning.setText("Damn, Robber!");
-//                    setMaximumVolume();
-                    mediaPlayer.start();
-                }
-            }.start();
-        }
-
+            @Override
+            public void onFinish() {
+                tvWarrning.setText("Damn, Robber!");
+                setMaximumVolume();
+                mediaPlayer.start();
+            }
+        }.start();
     }
 
     @Override
@@ -188,7 +197,7 @@ public class LockscreenActivity extends AppCompatActivity {
         manager.setStreamVolume(
                 AudioManager.STREAM_MUSIC, // Stream type
                 media_max_volume, // Index
-                AudioManager.FLAG_SHOW_UI // Flags
+                AudioManager.FLAG_VIBRATE // Flags
         );
     }
 

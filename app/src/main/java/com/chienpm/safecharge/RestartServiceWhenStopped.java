@@ -13,11 +13,6 @@ public class RestartServiceWhenStopped extends BroadcastReceiver {
         Intent serviceIntent = new Intent(context, RunInBackgroundService.class);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //Cannot use startService from backround in Andorid O anymore, use startForegroundService() and implement a Notification
-            /*
-                startForegroundService(Intent service)
-                Similar to startService(android.content.Intent), but with an implicit promise that the Service will call startForeground(int, android.app.Notification) once it begins running.
-             */
             serviceIntent.setAction(RunInBackgroundService.ACTION_START_FOREGROUND_SERVICE);
             context.startForegroundService(serviceIntent);
         } else {

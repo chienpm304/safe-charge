@@ -24,10 +24,8 @@ import android.util.Log;
 public class RunInBackgroundService extends Service {
     public static final String ACTION_START_FOREGROUND_SERVICE = "ACTION_START_FOREGROUND_SERVICE";
 
-    private static final int NOTIFICATION_ID = 304;
-    private static final String NOTIFICATIONS_CHANNEL = "NOTIFICATON_CHANNEL_NAME_IS_SAFE_CHARGE";
     Context mContext;
-    private final String NOTIFICATION_CHANNEL_ID = "channel_id";
+
     public RunInBackgroundService(Context context) {
         mContext = context;
     }
@@ -39,8 +37,7 @@ public class RunInBackgroundService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return null;
     }
     private static IntentFilter intentFilter;
     private NotificationUtils mNotificationUtils;
@@ -94,15 +91,9 @@ public class RunInBackgroundService extends Service {
     private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-//            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-//            int voltage = intent.getIntExtra("voltage", 0);
-//            int temperature = intent.getIntExtra("temperature", 0);
-//            double temps = (double)temperature / 10;
-
+//
             if (intent.getAction().equals(Intent.ACTION_POWER_CONNECTED)) {
                 Log.d("chienpm_log_tag", "Power connected!");
-//                Intent intent1 = new Intent(getApplicationContext(), CharingActivity.class);
-//                startActivity(intent1);
             }
             else if(intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED)) {
                 Log.d("chienpm_log_tag", "Power disconnected!");
