@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.service.autofill.TextValueSanitizer;
@@ -11,9 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
@@ -128,11 +131,22 @@ public class LockscreenActivity extends AppCompatActivity {
                 public void onFinish() {
                     //TODO: open alarm
                     tvWarrning.setText("Damn, Robber!");
+//                    setMaximumVolume();
                     mediaPlayer.start();
                 }
             }.start();
         }
 
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if(mMode == Definition.LOCKSCREEN_UNLOCK){
+            Log.d("chienpm_log_tag", "Key captured, mode = " + mMode);
+            Toast.makeText(this, "Aka, who know how to escape :))", Toast.LENGTH_LONG);
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
     }
 
     @Override
@@ -161,9 +175,21 @@ public class LockscreenActivity extends AppCompatActivity {
         tvWarrning = findViewById(R.id.tvWarrning);
         leftButton = findViewById(R.id.btnLeft);
         rightButton = findViewById(R.id.btnRight);
+
         mediaPlayer = MediaPlayer.create(this, R.raw.alert_sound);
         mediaPlayer.setLooping(true);
-        mediaPlayer.setVolume(1, 1);
+        mediaPlayer.setVolume(1.0f, 1.0f);
+    }
+
+    private void setMaximumVolume() {
+        AudioManager manager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int media_max_volume = manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+        manager.setStreamVolume(
+                AudioManager.STREAM_MUSIC, // Stream type
+                media_max_volume, // Index
+                AudioManager.FLAG_SHOW_UI // Flags
+        );
     }
 
 
