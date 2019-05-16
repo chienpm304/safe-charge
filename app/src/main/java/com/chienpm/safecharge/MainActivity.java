@@ -98,34 +98,24 @@ public class MainActivity extends AppCompatActivity {
         tvBatteryLevel = findViewById(R.id.battery_level);
         tvTemperature = findViewById(R.id.temperature_level);
         tvVoltage = findViewById(R.id.voltage_level);
-        btnSetupPassword = findViewById(R.id.btnSetupPassword);
-        btnSetupPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), LockscreenActivity.class);
-                intent.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_SETUP_PASSWORD);
-                startActivity(intent);
-            }
-        });
+
         checkPasswordStatus();
 
     }
 
     private void checkPasswordStatus() {
         if(isEmptyPassword()){
-            btnSetupPassword.setVisibility(View.VISIBLE);
-        }
-        else{
-            btnSetupPassword.setVisibility(View.GONE);
+            Intent intent = new Intent(getApplicationContext(), LockscreenActivity.class);
+            intent.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_SETUP_PASSWORD);
+            startActivity(intent);
         }
     }
 
     private boolean isEmptyPassword() {
-        return  true;
-//        SharedPreferences pref = getSharedPreferences(Definition.PREF_KEY_FILE, MODE_PRIVATE);
-//        String password = pref.getString(Definition.PREF_PASSWORD, "");
-//        Log.d("chienpm_log_tag", "password: "+password);
-//        return (TextUtils.isEmpty(password));
+        SharedPreferences pref = getSharedPreferences(Definition.PREF_KEY_FILE, MODE_PRIVATE);
+        String password = pref.getString(Definition.PREF_PASSWORD, "");
+        Log.d("chienpm_log_tag", "password: "+password);
+        return (TextUtils.isEmpty(password));
     }
 
     private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {

@@ -13,11 +13,11 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="1.5"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="24dp"
         android:fontFamily="sans-serif-thin"
-        android:gravity="center"
+        android:gravity="center|bottom"
         android:maxLines="1"
         android:text="Welcome"
         android:textColor="@color/white"
@@ -28,7 +28,7 @@
         android:id="@+id/tvWarrning"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="0.8"
         android:layout_gravity="center_horizontal"
         android:fontFamily="sans-serif-thin"
         android:gravity="center"
@@ -57,28 +57,28 @@
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
-        android:layout_marginHorizontal="24dp"
-
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:paddingVertical="18dp"
         >
         <Button
             android:id="@+id/btnLeft"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Left Button"
+            android:theme="@style/MyButton"
+            android:layout_marginLeft="16dp"
             />
         <Button
             android:id="@+id/btnRight"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Right Button"
-           />
-            <!--android:background="@drawable/transparent"-->
-            <!--android:textSize="20sp"-->
-            <!--android:textColor="@color/white"-->
-            <!--android:fontFamily="sans-serif-medium"-->
-            <!--/>-->
+            android:theme="@style/MyButton"
+            android:layout_marginRight="16dp"
+            />
     </LinearLayout>
 
 </LinearLayout>

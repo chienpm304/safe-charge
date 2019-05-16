@@ -52,6 +52,7 @@ public class LockscreenActivity extends AppCompatActivity {
     View.OnClickListener mCancelListener, mClearListener, mNextListener, mConfirmListener;
     private String mPrevPattern="";
     private String mNextPattern="";
+    private int wrongCount = 5;
 
     //Todo: Change button layout
 
@@ -169,15 +170,17 @@ public class LockscreenActivity extends AppCompatActivity {
         @Override
         public void onComplete(List<PatternLockView.Dot> pattern) {
 
-            String patternString = PatternLockUtils.patternToString(mPatternLockView, pattern);
-            Log.d("chienpm_log_tag", "drawn: "+ patternString);
 
-            if(patternString.length() < Definition.MIN_PATTERN_LENGTH)
+
+            if(PatternLockUtils.patternToString(mPatternLockView, pattern).length() < Definition.MIN_PATTERN_LENGTH)
             {
                 tvWarrning.setText("Connect at least 4 dots. Try again");
+                wrongCount--;
                 pattern.clear();
             }
             else{
+                String patternString = PatternLockUtils.patternToMD5(mPatternLockView, pattern);
+                Log.d("chienpm_log_tag", "drawn: "+ patternString);
                 switch (mMode){
                     case Definition.LOCKSCREEN_UNLOCK:
                         if(isCorrectPattern(patternString)){
@@ -186,6 +189,7 @@ public class LockscreenActivity extends AppCompatActivity {
                         }
                         else{
                             tvWarrning.setText("Wrong pattern");
+
                             pattern.clear();
                         }
 
@@ -200,6 +204,11 @@ public class LockscreenActivity extends AppCompatActivity {
                             updateScreenLayoutMode();
                         }else{
                             tvWarrning.setText("Wrong pattern");
+                            wrongCount--;
+                            if(wrongCount < 4)
+                                tvWarrning.setText("You have " + wrongCount +" attempts left");
+                            if(wrongCount < 1)
+                                finish();
                         }
                         break;
                     case Definition.LOCKSCREEN_SETUP_PASSWORD:

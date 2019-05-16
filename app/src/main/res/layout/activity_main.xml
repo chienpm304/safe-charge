@@ -13,10 +13,9 @@
         android:id="@+id/imgBattery"
         android:layout_width="match_parent"
         android:layout_height="600px"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/battery"
-        android:layout_marginTop="30dp"
-        />
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="54dp"
+        android:src="@drawable/battery" />
 
     <TextView
         android:id="@+id/battery_level"
@@ -25,7 +24,7 @@
         android:textColor="#000000"
         android:textSize="18dp"
         android:textStyle="bold"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="48dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/imgBattery"
         android:text="Battery Level"
@@ -56,15 +55,6 @@
         android:layout_centerHorizontal="true"
         android:text="Temperature: 23 Celius"
         />
-    <Button
-        android:id="@+id/btnSetupPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Setup password"
-        android:layout_below="@id/temperature_level"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:visibility="gone"
-        />
+
 
 </RelativeLayout>
