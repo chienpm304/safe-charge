@@ -91,7 +91,6 @@ public class RunInBackgroundService extends Service {
     private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-//
             if (intent.getAction().equals(Intent.ACTION_POWER_CONNECTED)) {
                 Log.d("chienpm_log_tag", "Power connected!");
             }

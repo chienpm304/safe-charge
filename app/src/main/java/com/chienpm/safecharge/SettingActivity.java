@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 public class SettingActivity extends AppCompatActivity {
 
+    //Todo: Change setting icon to white
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

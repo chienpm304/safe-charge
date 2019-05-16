@@ -1,9 +1,12 @@
 package com.chienpm.safecharge;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -23,12 +26,16 @@ public class MainActivity extends AppCompatActivity {
     RunInBackgroundService mService;
     Intent mServiceIntent;
 
+    //Todo: add multiple image/animation adapt to battery status mode
+    //Todo: ReDefine layout to fit all kind of device
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initViews();
+        registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
         mService = new RunInBackgroundService(this);
         mServiceIntent = new Intent(this, mService.getClass());
@@ -79,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         stopService(mServiceIntent);
+        unregisterReceiver(mBatInfoReceiver);
         super.onDestroy();
     }
 
@@ -113,10 +121,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isEmptyPassword() {
-        SharedPreferences pref = getSharedPreferences(Definition.PREF_KEY_FILE, MODE_PRIVATE);
-        String password = pref.getString(Definition.PREF_PASSWORD, "");
-        Log.d("chienpm_log_tag", "password: "+password);
-        return (TextUtils.isEmpty(password));
+        return  true;
+//        SharedPreferences pref = getSharedPreferences(Definition.PREF_KEY_FILE, MODE_PRIVATE);
+//        String password = pref.getString(Definition.PREF_PASSWORD, "");
+//        Log.d("chienpm_log_tag", "password: "+password);
+//        return (TextUtils.isEmpty(password));
     }
 
+    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+            int voltage = intent.getIntExtra("voltage", 0);
+            int temperature = intent.getIntExtra("temperature", 0);
+            tvBatteryLevel.setText("Battery Status: " + String.valueOf(level) + "%");
+            tvVoltage.setText("Battery Voltage: " + String.valueOf(voltage));
+            double temps = (double)temperature / 10;
+            tvTemperature.setText("Battery Temperature: " + String.valueOf(temps));
+
+        }
+    };
 }
