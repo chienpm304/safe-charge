@@ -8,5 +8,6 @@
     <color name="pomegranate">#f4511e</color>
     <color name="white">#FFFF</color>
     <color name="buttonBacground">#E2F8F8F8</color>
+    <color name="seprator_line">#5B837F7F</color>
     <!--<color name="pink">#FFFFFF</color>-->
 </resources>

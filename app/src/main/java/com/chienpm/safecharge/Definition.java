@@ -6,10 +6,13 @@ class Definition {
     public static final int LOCKSCREEN_UNLOCK = 1;
     public static final int LOCKSCREEN_CHANGE_PASSWORD = 2;
 
-    public static final String PREF_PASSWORD = "pref_password";
-
 
     public static final String PREF_KEY_FILE = "preference_key_file";
-    public static final int SETUP_PASSWORD_INTENT_CODE = 20001;
+
+    public static final String PREF_PASSWORD = "pref_password";
+
+    public static final String PREF_LANGUAGE = "pref_language";
+
     public static final int MIN_PATTERN_LENGTH = 4;
+    public static final String PREF_COUNTRY = "pref_country";
 }

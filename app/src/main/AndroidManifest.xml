@@ -11,10 +11,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".LanguageActivity"
+            android:label="@string/language">
+
+        </activity>
+
         <receiver
             android:name=".RestartServiceWhenStopped"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <service
             android:name=".RunInBackgroundService"
@@ -23,14 +29,12 @@
 
         <activity
             android:name=".SettingActivity"
-            android:label="Settings"
-            android:screenOrientation="portrait"
-            >
+            android:label="@string/settings"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
         <activity
             android:name=".LockscreenActivity"
             android:screenOrientation="portrait">
@@ -38,9 +42,7 @@
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
         </activity>
-
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">

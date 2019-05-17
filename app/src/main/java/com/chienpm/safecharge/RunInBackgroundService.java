@@ -40,11 +40,11 @@ public class RunInBackgroundService extends Service {
         return null;
     }
     private static IntentFilter intentFilter;
-    private NotificationUtils mNotificationUtils;
+    private NotificationUtils mNotificationUtils = null;
 
     @Override
     public void onCreate() {
-        mNotificationUtils = new NotificationUtils(this);
+
 
         Log.d("chienpm_log_tag", "Service created, Im going call startForeground");
 
@@ -58,6 +58,9 @@ public class RunInBackgroundService extends Service {
     }
 
     private void startForegroundService() {
+        if(mNotificationUtils == null)
+            mNotificationUtils = new NotificationUtils(this);
+
         Notification.Builder nb = mNotificationUtils.
                 getAndroidChannelNotification("Waiting for charging", "By " + "Chienpm");
 

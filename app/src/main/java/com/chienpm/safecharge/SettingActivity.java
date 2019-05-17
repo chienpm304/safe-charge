@@ -1,33 +1,80 @@
 package com.chienpm.safecharge;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class SettingActivity extends AppCompatActivity {
 
-    //Todo: Change setting icon to white
+    private ListView mListView;
+    private ArrayAdapter<String> mAdapter;
+    private List<String> mListSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
-        initViews();
-    }
 
 
-    private void initViews() {
-        ((TextView)findViewById(R.id.setting_change_password)).setOnClickListener(new View.OnClickListener() {
+        mListView = findViewById(R.id.listViewSettings);
+
+        mAdapter = new ArrayAdapter<String>(this, R.layout.list_text_item);
+        mListView.setAdapter(mAdapter);
+
+        MyUtils.updateSavedLanguage(this);
+        updateUiAdaptedToLanguage();
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), LockscreenActivity.class);
-                intent.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_CHANGE_PASSWORD);
-                startActivity(intent);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch(position){
+                    case 0: //change password
+                        Intent changPasswordIntent = new Intent(getApplicationContext(), LockscreenActivity.class);
+                        changPasswordIntent.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_CHANGE_PASSWORD);
+                        startActivity(changPasswordIntent);
+                        break;
+                    case 1://language
+                        Intent changeLanguageIntent = new Intent(getApplicationContext(), LanguageActivity.class);
+                        startActivity(changeLanguageIntent);
+                        break;
+                }
             }
         });
+
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        MyUtils.updateSavedLanguage(this);
+        updateUiAdaptedToLanguage();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MyUtils.updateSavedLanguage(this);
+        updateUiAdaptedToLanguage();
+        Log.d("chienpm_log", "onResume Setting activity");
+    }
+
+    private void updateUiAdaptedToLanguage() {
+        setTitle(R.string.settings);
+        //get string array adapted to language
+        mAdapter.clear();
+        mListSettings = Arrays.asList(getResources().getStringArray(R.array.list_settings));
+        mAdapter.addAll(mListSettings);
+    }
+
 }

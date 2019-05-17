@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alert_in">Bật báo động trong %1$ds</string>
+    <string name="battery_level">Mức pin: %1$d %%</string>
+    <string name="battery_temperature">Nhiệt độ pin: %1$d độ C</string>
+    <string name="battery_voltage">Điện áp: %1$d</string>
+    <string name="cancel">Hủy</string>
+    <string name="choose_your_pattern">Chọn hình của bạn</string>
+    <string name="draw_unlock_pattern">Vẽ hình mở khóa</string>
+    <string name="clear">Xóa</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="release_finger">Thả ngón tay khi xong</string>
+    <string name="next">Tiếp theo</string>
+    <string name="pattern_recorded">Đã ghi hình</string>
+    <string name="draw_pattern_again">Vẽ lại hình để xác nhận</string>
+    <string name="your_new_pattern">Hình mở khóa mới của bạn</string>
+    <string name="pattern_wrong">Sai hình</string>
+    <string name="confirm_pattern">Xác nhận hình của bạn</string>
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="pattern_error">Nối ít nhất 4 điểm. Hãy thử lại.</string>
+    <string name="pattern_attempts_left">Còn %1$d lượt thử</string>
+    <string name="thief_detected">Hmm, Bỏ điện thoại xuống ngay!</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="settings">Cài đặt</string>
+</resources>

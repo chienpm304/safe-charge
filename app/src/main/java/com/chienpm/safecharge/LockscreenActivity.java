@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
@@ -20,8 +21,6 @@ import android.widget.Toast;
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -40,9 +39,6 @@ public class LockscreenActivity extends AppCompatActivity {
     final int SETUP_STEP2_INIT = 13;
     final int SETUP_STEP2_DRAWING = 14;
     final int SETUP_STEP2_DRAWN = 15;
-
-
-
 
     Button leftButton, rightButton;
     TextView tvTittle, tvWarrning;
@@ -75,13 +71,19 @@ public class LockscreenActivity extends AppCompatActivity {
         initViews();
         initListener();
         updateScreenLayoutMode();
-
+        MyUtils.updateSavedLanguage(this);
         if(mMode == Definition.LOCKSCREEN_UNLOCK){
             //TODO: lock the phone i want disable all physical button when in unlock mode
 
             startCountDown();
         }
 
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        MyUtils.updateSavedLanguage(this);
     }
 
     private void initListener() {
@@ -120,14 +122,18 @@ public class LockscreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(TextUtils.equals(mPrevPattern, mNextPattern)){
-                    SharedPreferences pref = getSharedPreferences(Definition.PREF_KEY_FILE, MODE_PRIVATE);
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putString(Definition.PREF_PASSWORD, mNextPattern);
-                    editor.commit();
-                    finish();
+                    updatePassword();
                 }
             }
         };
+    }
+
+    private void updatePassword() {
+        SharedPreferences pref = getSharedPreferences(Definition.PREF_KEY_FILE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(Definition.PREF_PASSWORD, mNextPattern);
+        editor.apply();
+        finish();
     }
 
     //Deny Back, Volume button when in Unlock mode
@@ -135,7 +141,7 @@ public class LockscreenActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(mMode == Definition.LOCKSCREEN_UNLOCK){
             Log.d("chienpm_log_tag", "Key captured, mode = " + mMode + "key = "+keyCode);
-            Toast.makeText(this, "Aka, who know how to escape :))", Toast.LENGTH_LONG);
+            Toast.makeText(this, "Aka, who know how to escape :))", Toast.LENGTH_LONG).show();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -174,7 +180,7 @@ public class LockscreenActivity extends AppCompatActivity {
 
             if(PatternLockUtils.patternToString(mPatternLockView, pattern).length() < Definition.MIN_PATTERN_LENGTH)
             {
-                tvWarrning.setText("Connect at least 4 dots. Try again");
+                tvWarrning.setText(R.string.pattern_error);
                 wrongCount--;
                 pattern.clear();
             }
@@ -188,7 +194,7 @@ public class LockscreenActivity extends AppCompatActivity {
                             finish();
                         }
                         else{
-                            tvWarrning.setText("Wrong pattern");
+                            tvWarrning.setText(R.string.pattern_wrong);
 
                             pattern.clear();
                         }
@@ -203,10 +209,10 @@ public class LockscreenActivity extends AppCompatActivity {
                             reloadUI();
                             updateScreenLayoutMode();
                         }else{
-                            tvWarrning.setText("Wrong pattern");
+                            tvWarrning.setText(R.string.pattern_wrong);
                             wrongCount--;
                             if(wrongCount < 4)
-                                tvWarrning.setText("You have " + wrongCount +" attempts left");
+                                tvWarrning.setText(getString(R.string.pattern_attempts_left, wrongCount));
                             if(wrongCount < 1)
                                 finish();
                         }
@@ -221,7 +227,7 @@ public class LockscreenActivity extends AppCompatActivity {
                             if(TextUtils.equals(mPrevPattern, mNextPattern))
                                 mStep++;
                             else{
-                                tvWarrning.setText("Wrong pattern");
+                                tvWarrning.setText(R.string.pattern_wrong);
                                 pattern.clear();
                                 mStep = SETUP_STEP2_INIT;
                                 mNextPattern = "";
@@ -255,12 +261,12 @@ public class LockscreenActivity extends AppCompatActivity {
         timer = new CountDownTimer(10000, 1000) {
             @Override
             public void onTick(long l) {
-                tvWarrning.setText("Alert in " + String.valueOf(l/1000) +"s");
+                tvWarrning.setText(getString(R.string.alert_in, l/1000));
             }
 
             @Override
             public void onFinish() {
-                tvWarrning.setText("Damn, Robber!");
+                tvWarrning.setText(R.string.thief_detected);
                 setMaximumVolume();
                 mediaPlayer.start();
             }
@@ -309,22 +315,22 @@ public class LockscreenActivity extends AppCompatActivity {
     private void updateScreenLayoutMode() {
         switch (mMode){
             case Definition.LOCKSCREEN_UNLOCK:
-                setTitle("Safe Charge");
-                tvTittle.setText("Drawn unlock pattern");
+                setTitle(R.string.app_name);
+                tvTittle.setText(R.string.draw_unlock_pattern);
                 leftButton.setVisibility(View.GONE);
                 rightButton.setVisibility(View.GONE);
 
                 break;
             case Definition.LOCKSCREEN_CHANGE_PASSWORD:
-                setTitle("Change password");
+                setTitle(R.string.change_password);
                 leftButton.setVisibility(View.VISIBLE);
                 rightButton.setVisibility(View.GONE);
-                leftButton.setText("Cancel");
+                leftButton.setText(R.string.cancel);
                 leftButton.setOnClickListener(mCancelListener);
                 mStep = CHANGE_PASSWORD;
                 break;
             case Definition.LOCKSCREEN_SETUP_PASSWORD:
-                setTitle("Choose your pattern");
+                setTitle(R.string.choose_your_pattern);
                 mStep = SETUP_STEP1_INIT;
                 break;
         }
@@ -335,56 +341,56 @@ public class LockscreenActivity extends AppCompatActivity {
         switch (mStep){
             case SETUP_STEP1_INIT:
                 leftButton.setEnabled(true);
-                leftButton.setText("Cancel");
+                leftButton.setText(R.string.cancel);
                 leftButton.setOnClickListener(mCancelListener);
 
-                rightButton.setText("Next");
+                rightButton.setText(R.string.next);
                 rightButton.setEnabled(false);
 
-                tvTittle.setText("Draw an unlock pattern");
+                tvTittle.setText(R.string.draw_unlock_pattern);
                 break;
 
             case SETUP_STEP1_DRAWING:
             case SETUP_STEP2_DRAWING:
-                leftButton.setText("Cancel");
+                leftButton.setText(R.string.cancel);
                 leftButton.setEnabled(false);
                 leftButton.setOnClickListener(mCancelListener);
                 rightButton.setEnabled(false);
-                tvTittle.setText("Release finger when done");
+                tvTittle.setText(R.string.release_finger);
                 break;
 
             case SETUP_STEP1_DRAWN:
-                leftButton.setText("Clear");
+                leftButton.setText(R.string.clear);
                 leftButton.setEnabled(true);
                 leftButton.setOnClickListener(mClearListener);
 
-                rightButton.setText("Next");
+                rightButton.setText(R.string.next);
                 rightButton.setEnabled(true);
                 rightButton.setOnClickListener(mNextListener);
-                tvTittle.setText("Pattern recored");
+                tvTittle.setText(R.string.pattern_recorded);
                 break;
 
 
             case SETUP_STEP2_INIT:
-                leftButton.setText("Cancel");
-                rightButton.setText("Confirm");
+                leftButton.setText(R.string.cancel);
+                rightButton.setText(R.string.confirm);
                 leftButton.setEnabled(true);
                 rightButton.setEnabled(false);
-                tvTittle.setText("Draw pattern again to confirm");
+                tvTittle.setText(R.string.draw_pattern_again);
                 break;
 
             case SETUP_STEP2_DRAWN:
-                leftButton.setText("Cancel");
-                rightButton.setText("Confirm");
+                leftButton.setText(R.string.cancel);
+                rightButton.setText(R.string.confirm);
                 leftButton.setEnabled(true);
                 rightButton.setEnabled(true);
                 leftButton.setOnClickListener(mCancelListener);
                 rightButton.setOnClickListener(mConfirmListener);
-                tvTittle.setText("Your new unlock pattern");
+                tvTittle.setText(R.string.your_new_pattern);
                 break;
 
             case CHANGE_PASSWORD:
-                tvTittle.setText("Cofirm your pattern");
+                tvTittle.setText(R.string.confirm_pattern);
                 break;
         }
     }

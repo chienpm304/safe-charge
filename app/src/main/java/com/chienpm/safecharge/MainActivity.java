@@ -5,15 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.BatteryManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -35,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initViews();
+
         registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
         mService = new RunInBackgroundService(this);
@@ -45,8 +44,13 @@ public class MainActivity extends AppCompatActivity {
             startService(mServiceIntent);
         }
 
-        updateBatteryInfo();
+    }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        MyUtils.updateSavedLanguage(this);
+        updateUiAdaptedToLanguage();
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -90,44 +94,40 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void updateBatteryInfo() {
 
-    }
 
     private void initViews() {
         tvBatteryLevel = findViewById(R.id.battery_level);
         tvTemperature = findViewById(R.id.temperature_level);
         tvVoltage = findViewById(R.id.voltage_level);
-
         checkPasswordStatus();
+    }
 
+    private void updateUiAdaptedToLanguage() {
+        tvBatteryLevel.setText(R.string.battery_level);
+        tvTemperature.setText(R.string.battery_temperature);
+        tvVoltage.setText(R.string.battery_voltage);
+        setTitle(getString(R.string.app_name));
     }
 
     private void checkPasswordStatus() {
-        if(isEmptyPassword()){
+        if(MyUtils.isEmptyPassword(this)){
             Intent intent = new Intent(getApplicationContext(), LockscreenActivity.class);
             intent.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_SETUP_PASSWORD);
             startActivity(intent);
         }
     }
 
-    private boolean isEmptyPassword() {
-        SharedPreferences pref = getSharedPreferences(Definition.PREF_KEY_FILE, MODE_PRIVATE);
-        String password = pref.getString(Definition.PREF_PASSWORD, "");
-        Log.d("chienpm_log_tag", "password: "+password);
-        return (TextUtils.isEmpty(password));
-    }
-
-    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
+   private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
             int voltage = intent.getIntExtra("voltage", 0);
             int temperature = intent.getIntExtra("temperature", 0);
-            tvBatteryLevel.setText("Battery Status: " + String.valueOf(level) + "%");
-            tvVoltage.setText("Battery Voltage: " + String.valueOf(voltage));
+            tvBatteryLevel.setText(getString(R.string.battery_level, level));
+            tvVoltage.setText(getString(R.string.battery_voltage, voltage));
             double temps = (double)temperature / 10;
-            tvTemperature.setText("Battery Temperature: " + String.valueOf(temps));
+            tvTemperature.setText(getString(R.string.battery_temperature, (int)temps));
 
         }
     };

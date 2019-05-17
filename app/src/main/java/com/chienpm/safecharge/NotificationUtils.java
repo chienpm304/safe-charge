@@ -13,8 +13,8 @@ import android.os.Build;
 public class NotificationUtils extends ContextWrapper {
 
     private NotificationManager mManager;
-    public static final String ANDROID_CHANNEL_ID = "com.chikeandroid.tutsplustalerts.ANDROID";
-    public static final String IOS_CHANNEL_ID = "com.chikeandroid.tutsplustalerts.IOS";
+    public static final String ANDROID_CHANNEL_ID = "com.chienpm.safecharge.ANDROID";
+    public static final String IOS_CHANNEL_ID = "com.chienpm.safecharge.IOS";
     public static final String ANDROID_CHANNEL_NAME = "ANDROID CHANNEL";
     public static final String IOS_CHANNEL_NAME = "IOS CHANNEL";
 
