@@ -24,7 +24,8 @@ public class MainActivity extends AppCompatActivity {
     RunInBackgroundService mService;
     Intent mServiceIntent;
 
-    //Todo: ReDefine layout to fit all kind of device
+    //Todo: make icon responsive
+    //Todo: change battery image to icon
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
