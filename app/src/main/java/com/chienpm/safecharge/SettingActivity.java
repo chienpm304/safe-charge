@@ -39,12 +39,12 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch(position){
-                    case 0: //change password
+                    case 1: //change password
                         Intent changPasswordIntent = new Intent(getApplicationContext(), LockscreenActivity.class);
                         changPasswordIntent.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_CHANGE_PASSWORD);
                         startActivity(changPasswordIntent);
                         break;
-                    case 1://language
+                    case 0://language
                         Intent changeLanguageIntent = new Intent(getApplicationContext(), LanguageActivity.class);
                         startActivity(changeLanguageIntent);
                         break;

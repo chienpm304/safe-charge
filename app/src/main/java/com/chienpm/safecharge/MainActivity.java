@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
             startService(mServiceIntent);
         }
 
+        MyUtils.updateSavedLanguage(this);
+        updateUiAdaptedToLanguage();
+
     }
 
     @Override
@@ -66,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        MyUtils.updateSavedLanguage(this);
+        updateUiAdaptedToLanguage();
         checkPasswordStatus();
         super.onResume();
     }

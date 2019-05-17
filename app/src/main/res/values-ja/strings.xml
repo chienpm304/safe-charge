@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">安全な充電</string>
+    <string name="battery_level">" 電池残量: %1$d %%"</string>
+    <string name="battery_temperature">電池温度: %1$d 摂氏</string>
+    <string name="battery_voltage">電池温度: %1$d</string>
+    <string name="cancel">キャンセル</string>
+    <string name="change_password">パスワード変更</string>
+    <string name="choose_your_pattern">あなたのパターンを選んでください</string>
+    <string name="clear">" クリア"</string>
+    <string name="confirm">確認する</string>
+    <string name="confirm_pattern">" あなたのパターンを確認してください"</string>
+    <string name="draw_pattern_again">確認のためにもう一度パターンを描きます</string>
+    <string name="draw_unlock_pattern">ロック解除パターンを描く</string>
+    <string name="language">言語</string>
+    <string name="next">次</string>
+    <string name="pattern_attempts_left">残り%1$d 試行があります</string>
+    <string name="pattern_error">少なくとも4つの点をつないでください。再試行する</string>
+    <string name="pattern_recorded">記録されたパターン</string>
+    <string name="pattern_wrong">間違ったパターン</string>
+    <string name="release_finger">終わったら指を離す</string>
+    <string name="settings">設定</string>
+    <string name="thief_detected">私の電話を下ろす</string>
+    <string name="your_new_pattern">あなたの新しいロック解除パターン</string>
+</resources>
