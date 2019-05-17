@@ -19,7 +19,7 @@
         android:fontFamily="sans-serif-thin"
         android:gravity="center|bottom"
         android:maxLines="1"
-        android:text="Welcome"
+        android:text="@string/draw_pattern_again"
         android:textColor="@color/white"
         android:textSize="30sp"
         />
@@ -33,7 +33,7 @@
         android:fontFamily="sans-serif-thin"
         android:gravity="center"
         android:maxLines="1"
-        android:text=""
+        android:text="@string/pattern_error"
         android:textColor="@android:color/holo_red_dark"
         android:textStyle="bold"
         android:textSize="20sp"/>

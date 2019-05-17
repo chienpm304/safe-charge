@@ -50,7 +50,7 @@ public class LockscreenActivity extends AppCompatActivity {
     private String mNextPattern="";
     private int wrongCount = 5;
 
-    //Todo: ReDefine layout to fit all kind of device
+    //Todo: ReDefine layout to fit all kind of device, hdpi, lpdi, mpdi, xhdpi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
