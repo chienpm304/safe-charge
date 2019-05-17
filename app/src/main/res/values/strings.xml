@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">Safe Charging</string>
-    <string name="battery_level">Battery Level: %1$d %%</string>
+    <string name="battery_level">Battery Level: %1$d%%</string>
     <string name="battery_voltage">Battery Voltage: %1$d</string>
     <string name="battery_temperature">Battery Temperature: %1$d Celsius</string>
     <string name="pattern_error">Connect at least 4 dots. Try again</string>
     <string name="pattern_wrong">Wrong pattern</string>
     <string name="pattern_attempts_left">You have %1$d attempts left</string>
-    <string name="alert_in">Alert in %1$ds</string>
-    <string name="thief_detected">Damn, Robber!</string>
+    <string name="alert_in">Alarm will turn on after %1$d seconds</string>
+    <string name="thief_detected">Drop my phone now!</string>
     <string name="cancel">Cancel</string>
     <string name="draw_unlock_pattern">Draw unlock pattern</string>
     <string name="change_password">Change password</string>
@@ -22,7 +22,7 @@
     <string name="confirm_pattern">Confirm your pattern</string>
     <string name="language">Language</string>
     <string name="settings">Settings</string>
-
+    <string name="do_not_escape">Please unlock to turn off the alarm</string>
 
     <string name="lang_vi_key" translatable="false">vi</string>
     <string name="lang_vi_display" translatable="false">Tiếng Việt</string>

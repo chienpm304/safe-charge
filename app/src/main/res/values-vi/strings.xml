@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="alert_in">Bật báo động trong %1$ds</string>
-    <string name="battery_level">Mức pin: %1$d %%</string>
+    <string name="alert_in">Báo động sẽ bật sau %1$d giây</string>
+    <string name="battery_level">Mức pin: %1$d%%</string>
     <string name="battery_temperature">Nhiệt độ pin: %1$d độ C</string>
     <string name="battery_voltage">Điện áp: %1$d</string>
     <string name="cancel">Hủy</string>
@@ -19,8 +19,9 @@
     <string name="change_password">Đổi mật khẩu</string>
     <string name="pattern_error">Nối ít nhất 4 điểm. Hãy thử lại.</string>
     <string name="pattern_attempts_left">Còn %1$d lượt thử</string>
-    <string name="thief_detected">Hmm, Bỏ điện thoại xuống ngay!</string>
+    <string name="thief_detected">Bỏ điện thoại của tôi xuống ngay!</string>
     <string name="language">Ngôn ngữ</string>
     <string name="settings">Cài đặt</string>
-    <string name="app_name">Sạc an toàn</string>
+    <string name="app_name">Sạc pin an toàn</string>
+    <string name="do_not_escape">Vui lòng mở khóa để tắt báo động</string>
 </resources>

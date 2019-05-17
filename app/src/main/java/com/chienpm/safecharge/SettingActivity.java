@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +32,7 @@ public class SettingActivity extends AppCompatActivity {
         mListView.setAdapter(mAdapter);
 
         MyUtils.updateSavedLanguage(this);
-        updateUiAdaptedToLanguage();
+        updateUI();
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -57,19 +56,19 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        MyUtils.updateSavedLanguage(this);
-        updateUiAdaptedToLanguage();
+        if(MyUtils.updateSavedLanguage(this))
+            updateUI();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        MyUtils.updateSavedLanguage(this);
-        updateUiAdaptedToLanguage();
+        if(MyUtils.updateSavedLanguage(this))
+            updateUI();
         Log.d("chienpm_log", "onResume Setting activity");
     }
 
-    private void updateUiAdaptedToLanguage() {
+    private void updateUI() {
         setTitle(R.string.settings);
         //get string array adapted to language
         mAdapter.clear();

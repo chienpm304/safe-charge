@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">安全な充電</string>
-    <string name="battery_level">" 電池残量: %1$d %%"</string>
+    <string name="battery_level">" 電池残量: %1$d%%"</string>
     <string name="battery_temperature">電池温度: %1$d 摂氏</string>
     <string name="battery_voltage">電池温度: %1$d</string>
     <string name="cancel">キャンセル</string>
@@ -20,6 +20,8 @@
     <string name="pattern_wrong">間違ったパターン</string>
     <string name="release_finger">終わったら指を離す</string>
     <string name="settings">設定</string>
-    <string name="thief_detected">私の電話を下ろす</string>
+    <string name="thief_detected">今私の電話を落とす</string>
     <string name="your_new_pattern">あなたの新しいロック解除パターン</string>
+    <string name="alert_in">"アラームは %1$d 秒後にオンになります "</string>
+    <string name="do_not_escape">アラームをオフにするにはロックを解除してください</string>
 </resources>

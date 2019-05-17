@@ -139,7 +139,7 @@ public class LockscreenActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(mMode == Definition.LOCKSCREEN_UNLOCK){
             Log.d("chienpm_log_tag", "Key captured, mode = " + mMode + "key = "+keyCode);
-            Toast.makeText(this, "Aka, who know how to escape :))", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.do_not_escape, Toast.LENGTH_LONG).show();
             return true;
         }
         return super.onKeyDown(keyCode, event);
