@@ -50,7 +50,7 @@ public class LockscreenActivity extends AppCompatActivity {
     private String mNextPattern="";
     private int wrongCount = 5;
 
-    //Todo: Change button layout
+    //Todo: ReDefine layout to fit all kind of device
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +73,6 @@ public class LockscreenActivity extends AppCompatActivity {
         updateScreenLayoutMode();
         MyUtils.updateSavedLanguage(this);
         if(mMode == Definition.LOCKSCREEN_UNLOCK){
-            //TODO: lock the phone i want disable all physical button when in unlock mode
-
             startCountDown();
         }
 

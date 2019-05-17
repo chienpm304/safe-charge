@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     RunInBackgroundService mService;
     Intent mServiceIntent;
 
-    //Todo: add multiple image/animation adapt to battery status mode
     //Todo: ReDefine layout to fit all kind of device
 
     @Override
