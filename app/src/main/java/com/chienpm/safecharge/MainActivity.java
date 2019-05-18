@@ -66,11 +66,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onRestart() {
+        checkPasswordStatus();
         if(MyUtils.updateSavedLanguage(this))
             updateUI();
-        checkPasswordStatus();
-        super.onResume();
+        super.onRestart();
     }
 
     @Override
@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), LockscreenActivity.class);
             intent.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_SETUP_PASSWORD);
             startActivity(intent);
+            Log.d("chienpm_log", "START password activity");
         }
     }
     int level, voltage, temperature;

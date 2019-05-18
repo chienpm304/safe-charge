@@ -118,19 +118,14 @@ public class LockscreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(TextUtils.equals(mPrevPattern, mNextPattern)){
-                    updatePassword();
+                    MyUtils.savedNewPassword(getApplicationContext(), mNextPattern);
+                    finish();
                 }
             }
         };
     }
 
-    private void updatePassword() {
-        SharedPreferences pref = getSharedPreferences(Definition.PREF_KEY_FILE, MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(Definition.PREF_PASSWORD, mNextPattern);
-        editor.apply();
-        finish();
-    }
+
 
     //Deny Back, Volume button when in Unlock mode
     @Override
@@ -171,8 +166,6 @@ public class LockscreenActivity extends AppCompatActivity {
 
         @Override
         public void onComplete(List<PatternLockView.Dot> pattern) {
-
-
 
             if(PatternLockUtils.patternToString(mPatternLockView, pattern).length() < Definition.MIN_PATTERN_LENGTH)
             {
@@ -325,6 +318,7 @@ public class LockscreenActivity extends AppCompatActivity {
                 leftButton.setOnClickListener(mCancelListener);
                 mStep = CHANGE_PASSWORD;
                 break;
+
             case Definition.LOCKSCREEN_SETUP_PASSWORD:
                 setTitle(R.string.choose_your_pattern);
                 mStep = SETUP_STEP1_INIT;

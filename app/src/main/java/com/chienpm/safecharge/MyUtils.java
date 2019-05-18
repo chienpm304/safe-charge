@@ -43,6 +43,14 @@ public class MyUtils {
         return (TextUtils.isEmpty(password));
     }
 
+    public static void savedNewPassword(Context context, String newPassword) {
+        SharedPreferences pref = context.getSharedPreferences(Definition.PREF_KEY_FILE, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(Definition.PREF_PASSWORD, newPassword);
+        editor.apply();
+        editor.commit();
+    }
+
     @SuppressWarnings("deprecation")
     public static Locale getCurrentLocale(Context context) {
         Configuration configuration = context.getResources().getConfiguration();
