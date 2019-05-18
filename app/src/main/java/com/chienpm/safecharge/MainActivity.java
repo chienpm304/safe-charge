@@ -17,9 +17,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnSetupPassword;
     TextView tvVoltage, tvTemperature, tvBatteryLevel;
-
 
     RunInBackgroundService mService;
     Intent mServiceIntent;
@@ -33,6 +31,14 @@ public class MainActivity extends AppCompatActivity {
 
         registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
+        initServices();
+
+        MyUtils.updateSavedLanguage(this);
+        updateUI();
+
+    }
+
+    private void initServices() {
         mService = new RunInBackgroundService(this);
         mServiceIntent = new Intent(this, mService.getClass());
 
@@ -40,10 +46,6 @@ public class MainActivity extends AppCompatActivity {
         if (!isMyServiceRunning(mService.getClass())) {
             startService(mServiceIntent);
         }
-
-        MyUtils.updateSavedLanguage(this);
-        updateUI();
-
     }
 
     @Override
@@ -63,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
         }
         Log.i ("isMyServiceRunning?", false+"");
         return false;
+    }
+
+    @Override
+    protected void onResume() {
+        if(MyUtils.updateSavedLanguage(this))
+            updateUI();
+        super.onResume();
     }
 
     @Override

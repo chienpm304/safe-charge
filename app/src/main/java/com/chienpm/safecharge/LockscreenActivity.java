@@ -181,6 +181,8 @@ public class LockscreenActivity extends AppCompatActivity {
                         if(isCorrectPattern(patternString)){
                             mediaPlayer.stop();
                             finish();
+                            Intent mainAct = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(mainAct);
                         }
                         else{
                             tvWarrning.setText(R.string.pattern_wrong);
