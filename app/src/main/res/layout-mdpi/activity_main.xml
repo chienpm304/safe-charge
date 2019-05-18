@@ -12,9 +12,10 @@
     <ImageView
         android:id="@+id/imgBattery"
         android:layout_width="match_parent"
-        android:layout_height="260dp"
+        android:layout_height="300dp"
         android:layout_alignParentTop="true"
-        android:src="@drawable/battery" />
+        android:layout_marginTop="0dp"
+        android:src="@drawable/logo_512" />
 
     <TextView
         android:id="@+id/battery_level"

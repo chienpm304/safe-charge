@@ -1,42 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--<LinearLayout android:orientation="vertical"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--tools:context=".SettingActivity"-->
-    <!--xmlns:tools="http://schemas.android.com/tools">-->
-    <!--<TextView-->
-        <!--android:id="@+id/setting_language"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/language"-->
-        <!--android:padding="20dp"-->
-        <!--android:textSize="18sp"-->
-        <!--android:textColor="#000"-->
-        <!--/>-->
-
-    <!--<View-->
-        <!--android:background="@color/seprator_line"-->
-        <!--android:layout_width = "match_parent"-->
-        <!--android:layout_height="1dp"/>-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/setting_change_password"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/change_password"-->
-        <!--android:padding="20dp"-->
-        <!--android:textSize="18sp"-->
-        <!--android:textColor="#000"-->
-        <!--/>-->
-    <!--<View-->
-        <!--android:background="@color/seprator_line"-->
-        <!--android:layout_width = "match_parent"-->
-        <!--android:layout_height="1dp"/>-->
-
-<!--</LinearLayout>-->
-
 <ListView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"

@@ -14,7 +14,9 @@
         <activity
             android:name=".LanguageActivity"
             android:label="@string/language">
-
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".SettingActivity" />
         </activity>
 
         <receiver

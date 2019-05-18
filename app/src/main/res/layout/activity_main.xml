@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="220dp"
         android:layout_alignParentTop="true"
-        android:src="@drawable/battery" />
+        android:src="@drawable/logo_512" />
 
     <TextView
         android:id="@+id/battery_level"
