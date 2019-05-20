@@ -78,17 +78,17 @@ public class RunInBackgroundService extends Service {
         return Service.START_STICKY;
     }
 
+
     @Override
     public void onDestroy() {
         Log.d("chienpm_log_tag", "Service was killed");
 
         super.onDestroy();
 
-        Intent broadcastIntent = new Intent(this, RestartServiceWhenStopped.class);
+        Intent broadcastIntent = new Intent(this, RestartServiceWhenStoppedReceiver.class);
         sendBroadcast(broadcastIntent);
 
         unregisterReceiver(mBatInfoReceiver);
-
     }
 
     private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {

@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
-public class RestartServiceWhenStopped extends BroadcastReceiver {
+public class RestartServiceWhenStoppedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

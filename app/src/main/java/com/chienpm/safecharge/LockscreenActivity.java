@@ -21,6 +21,9 @@ import android.widget.Toast;
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import java.util.List;
 
@@ -44,6 +47,7 @@ public class LockscreenActivity extends AppCompatActivity {
     TextView tvTittle, tvWarrning;
     CountDownTimer timer;
     MediaPlayer mediaPlayer;
+    AdView mAdView;
 
     View.OnClickListener mCancelListener, mClearListener, mNextListener, mConfirmListener;
     private String mPrevPattern="";
@@ -72,6 +76,12 @@ public class LockscreenActivity extends AppCompatActivity {
         MyUtils.updateSavedLanguage(this);
         if(mMode == Definition.LOCKSCREEN_UNLOCK){
             startCountDown();
+            initAdmod();
+            mAdView.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            mAdView.setVisibility(View.GONE);
         }
 
     }
@@ -99,6 +109,7 @@ public class LockscreenActivity extends AppCompatActivity {
         mCancelListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Todo: add an admod
                 finish();
             }
         };
@@ -119,6 +130,7 @@ public class LockscreenActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(TextUtils.equals(mPrevPattern, mNextPattern)){
                     MyUtils.savedNewPassword(getApplicationContext(), mNextPattern);
+                    //Todo: add an admod
                     finish();
                 }
             }
@@ -137,11 +149,30 @@ public class LockscreenActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+    @Override
+    protected void onResume() {
+
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+        super.onResume();
+    }
 
     @Override
     protected void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
         super.onDestroy();
         stopService(mServiceIntent); //stop service to invoke the sevice's destroy and restart service immediately
+    }
+
+    @Override
+    protected void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
     }
 
     private PatternLockView mPatternLockView;
@@ -180,13 +211,13 @@ public class LockscreenActivity extends AppCompatActivity {
                     case Definition.LOCKSCREEN_UNLOCK:
                         if(isCorrectPattern(patternString)){
                             mediaPlayer.stop();
+                            ////Todo: add an admod
                             finish();
                             Intent mainAct = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(mainAct);
                         }
                         else{
                             tvWarrning.setText(R.string.pattern_wrong);
-
                             pattern.clear();
                         }
 
@@ -280,7 +311,7 @@ public class LockscreenActivity extends AppCompatActivity {
     private void initViews() {
         mPatternLockView = (PatternLockView)findViewById(R.id.patter_lock_view);
         mPatternLockView.addPatternLockListener(mPatternLockViewListener);
-
+        mAdView = findViewById(R.id.lockScreenAdview);
         tvTittle = findViewById(R.id.tvTitle);
         tvWarrning = findViewById(R.id.tvWarrning);
         leftButton = findViewById(R.id.btnLeft);
@@ -289,6 +320,15 @@ public class LockscreenActivity extends AppCompatActivity {
         mediaPlayer = MediaPlayer.create(this, R.raw.alert_sound);
         mediaPlayer.setLooping(true);
         mediaPlayer.setVolume(1.0f, 1.0f);
+    }
+
+    private void initAdmod() {
+        //Admod
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mAdView.loadAd(adRequest);
     }
 
     private void setMaximumVolume() {

@@ -7,17 +7,24 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView tvVoltage, tvTemperature, tvBatteryLevel;
+    AdView mAdView;
 
     RunInBackgroundService mService;
     Intent mServiceIntent;
@@ -29,14 +36,22 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
 
-        initServices();
+        registerServices();
 
         MyUtils.updateSavedLanguage(this);
+
         updateUI();
 
     }
 
-    private void initServices() {
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if(MyUtils.updateSavedLanguage(this))
+            updateUI();
+    }
+
+    private void registerServices() {
         registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         mService = new RunInBackgroundService(this);
         mServiceIntent = new Intent(this, mService.getClass());
@@ -45,11 +60,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if(MyUtils.updateSavedLanguage(this))
-            updateUI();
+    private void unregisterServices() {
+        if (mServiceIntent != null) {
+            stopService(mServiceIntent);
+            mServiceIntent = null;
+        }
+        if(mBatInfoReceiver != null) {
+            unregisterReceiver(mBatInfoReceiver);
+            mBatInfoReceiver = null;
+        }
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -68,7 +87,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         if(MyUtils.updateSavedLanguage(this))
             updateUI();
-        initServices();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+        registerServices();
         super.onResume();
     }
 
@@ -97,15 +119,72 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+
+
+    @Override
     protected void onDestroy() {
-        stopService(mServiceIntent);
-        unregisterReceiver(mBatInfoReceiver);
+        unregisterServices();
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
         super.onDestroy();
     }
 
 
 
     private void initViews() {
+        //Init Admod
+        Log.d("chienpm_log", "inited admod");
+
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
+
+        mAdView = (AdView)findViewById(R.id.adView);
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+//        mAdView.setAdListener(new AdListener(){
+//
+//            @Override
+//            public void onAdLoaded() {
+//
+//            }
+//
+//            @Override
+//            public void onAdClosed() {
+//                Toast.makeText(getApplicationContext(), "Ad is closed!", Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override
+//            public void onAdFailedToLoad(int errorCode) {
+//                Toast.makeText(getApplicationContext(), "Ad failed to load! error code: " + errorCode, Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override
+//            public void onAdLeftApplication() {
+//                Toast.makeText(getApplicationContext(), "Ad left application!", Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override
+//            public void onAdOpened() {
+//                super.onAdOpened();
+//                Toast.makeText(getApplicationContext(), "Ad opened!", Toast.LENGTH_LONG).show();
+//            }
+//
+//
+//        });
+
+        mAdView.loadAd(adRequest);
+
+
         tvBatteryLevel = findViewById(R.id.battery_level);
         tvTemperature = findViewById(R.id.temperature_level);
         tvVoltage = findViewById(R.id.voltage_level);

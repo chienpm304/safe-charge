@@ -73,9 +73,10 @@ public class MyUtils {
         String savedLangCountry = pref.getString(Definition.PREF_COUNTRY, "");
 
         Locale currentLocale = MyUtils.getCurrentLocale(context);
-        Log.d("chienpm_log", "I was locale :(");
+
         if(TextUtils.isEmpty(savedLangCode))
         {
+            Log.d("chienpm_log", "I was localed because savedLangCode is empty");
             MyUtils.saveLocale(currentLocale, context);
             return true;
         }
@@ -83,7 +84,7 @@ public class MyUtils {
             //need to change language
             Locale locale = new Locale(savedLangCode, savedLangCountry);
             MyUtils.changeLanguage(locale, context);
-            Log.d("chienpm_log", "I resetted locale :(");
+            Log.d("chienpm_log", "I was localed because savedLangCode changed");
             return true;
         }
         return false;
