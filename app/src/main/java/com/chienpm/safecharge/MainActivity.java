@@ -29,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
 
-        registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-
         initServices();
 
         MyUtils.updateSavedLanguage(this);
@@ -39,10 +37,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initServices() {
+        registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         mService = new RunInBackgroundService(this);
         mServiceIntent = new Intent(this, mService.getClass());
-
-
         if (!isMyServiceRunning(mService.getClass())) {
             startService(mServiceIntent);
         }
@@ -71,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         if(MyUtils.updateSavedLanguage(this))
             updateUI();
+        initServices();
         super.onResume();
     }
 
