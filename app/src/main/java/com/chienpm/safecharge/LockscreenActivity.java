@@ -3,7 +3,6 @@ package com.chienpm.safecharge;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -21,8 +20,10 @@ import android.widget.Toast;
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 
 import java.util.List;
@@ -48,6 +49,8 @@ public class LockscreenActivity extends AppCompatActivity {
     CountDownTimer timer;
     MediaPlayer mediaPlayer;
     AdView mAdView;
+    InterstitialAd mInterstitialAd;
+
 
     View.OnClickListener mCancelListener, mClearListener, mNextListener, mConfirmListener;
     private String mPrevPattern="";
@@ -71,12 +74,9 @@ public class LockscreenActivity extends AppCompatActivity {
         }
 
         initViews();
-        initListener();
-        updateScreenLayoutMode();
-        MyUtils.updateSavedLanguage(this);
+
         if(mMode == Definition.LOCKSCREEN_UNLOCK){
             startCountDown();
-            initAdmod();
             mAdView.setVisibility(View.VISIBLE);
         }
         else
@@ -84,6 +84,35 @@ public class LockscreenActivity extends AppCompatActivity {
             mAdView.setVisibility(View.GONE);
         }
 
+        initBannerAdmod();
+        initInterstitalAd();
+        initListener();
+        updateScreenLayoutMode();
+        MyUtils.updateSavedLanguage(this);
+    }
+
+    private void initInterstitalAd() {
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen_test));
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                // Load the next interstitial.
+//                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            }
+
+        });
+        mInterstitialAd.loadAd(adRequest);
+
+    }
+
+    private void showInterstitial() {
+        if (mInterstitialAd != null && mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        }
     }
 
     @Override
@@ -109,8 +138,9 @@ public class LockscreenActivity extends AppCompatActivity {
         mCancelListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Todo: add an admod
+                showInterstitial();
                 finish();
+
             }
         };
 
@@ -130,7 +160,7 @@ public class LockscreenActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(TextUtils.equals(mPrevPattern, mNextPattern)){
                     MyUtils.savedNewPassword(getApplicationContext(), mNextPattern);
-                    //Todo: add an admod
+                    showInterstitial();
                     finish();
                 }
             }
@@ -195,6 +225,7 @@ public class LockscreenActivity extends AppCompatActivity {
             }
         }
 
+
         @Override
         public void onComplete(List<PatternLockView.Dot> pattern) {
 
@@ -211,7 +242,6 @@ public class LockscreenActivity extends AppCompatActivity {
                     case Definition.LOCKSCREEN_UNLOCK:
                         if(isCorrectPattern(patternString)){
                             mediaPlayer.stop();
-                            ////Todo: add an admod
                             finish();
                             Intent mainAct = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(mainAct);
@@ -322,7 +352,7 @@ public class LockscreenActivity extends AppCompatActivity {
         mediaPlayer.setVolume(1.0f, 1.0f);
     }
 
-    private void initAdmod() {
+    private void initBannerAdmod() {
         //Admod
         MobileAds.initialize(this, getString(R.string.admob_app_id));
         AdRequest adRequest = new AdRequest.Builder()

@@ -71,6 +71,9 @@
     <!- -->
     <string name="admob_app_id_test" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
     <string name="banner_home_footer_test" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="interstitial_full_screen_test" translatable="false">ca-app-pub-3940256099942544/1033173712
+
+</string>
 
 
 </resources>
