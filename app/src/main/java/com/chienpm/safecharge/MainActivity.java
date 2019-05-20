@@ -17,14 +17,10 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnSetupPassword;
     TextView tvVoltage, tvTemperature, tvBatteryLevel;
-
 
     RunInBackgroundService mService;
     Intent mServiceIntent;
-
-    //Todo: ReDefine layout to fit all kind of device
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,23 +29,27 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
 
-        registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        initServices();
 
+        MyUtils.updateSavedLanguage(this);
+        updateUI();
+
+    }
+
+    private void initServices() {
+        registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         mService = new RunInBackgroundService(this);
         mServiceIntent = new Intent(this, mService.getClass());
-
-
         if (!isMyServiceRunning(mService.getClass())) {
             startService(mServiceIntent);
         }
-
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        MyUtils.updateSavedLanguage(this);
-        updateUiAdaptedToLanguage();
+        if(MyUtils.updateSavedLanguage(this))
+            updateUI();
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -66,8 +66,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        checkPasswordStatus();
+        if(MyUtils.updateSavedLanguage(this))
+            updateUI();
+        initServices();
         super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        checkPasswordStatus();
+        if(MyUtils.updateSavedLanguage(this))
+            updateUI();
+        super.onRestart();
     }
 
     @Override
@@ -102,10 +112,10 @@ public class MainActivity extends AppCompatActivity {
         checkPasswordStatus();
     }
 
-    private void updateUiAdaptedToLanguage() {
-        tvBatteryLevel.setText(R.string.battery_level);
-        tvTemperature.setText(R.string.battery_temperature);
-        tvVoltage.setText(R.string.battery_voltage);
+    private void updateUI() {
+        tvBatteryLevel.setText(getString(R.string.battery_level, level));
+        tvVoltage.setText(getString(R.string.battery_voltage, voltage));
+        tvTemperature.setText(getString(R.string.battery_temperature, (int)temperature/10));
         setTitle(getString(R.string.app_name));
     }
 
@@ -114,20 +124,17 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), LockscreenActivity.class);
             intent.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_SETUP_PASSWORD);
             startActivity(intent);
+            Log.d("chienpm_log", "START password activity");
         }
     }
-
-   private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
+    int level, voltage, temperature;
+    private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-            int voltage = intent.getIntExtra("voltage", 0);
-            int temperature = intent.getIntExtra("temperature", 0);
-            tvBatteryLevel.setText(getString(R.string.battery_level, level));
-            tvVoltage.setText(getString(R.string.battery_voltage, voltage));
-            double temps = (double)temperature / 10;
-            tvTemperature.setText(getString(R.string.battery_temperature, (int)temps));
-
+            level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+            voltage = intent.getIntExtra("voltage", 0);
+            temperature = intent.getIntExtra("temperature", 0);
+            updateUI();
         }
     };
 }

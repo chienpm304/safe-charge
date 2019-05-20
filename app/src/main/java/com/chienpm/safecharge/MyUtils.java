@@ -43,6 +43,14 @@ public class MyUtils {
         return (TextUtils.isEmpty(password));
     }
 
+    public static void savedNewPassword(Context context, String newPassword) {
+        SharedPreferences pref = context.getSharedPreferences(Definition.PREF_KEY_FILE, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(Definition.PREF_PASSWORD, newPassword);
+        editor.apply();
+        editor.commit();
+    }
+
     @SuppressWarnings("deprecation")
     public static Locale getCurrentLocale(Context context) {
         Configuration configuration = context.getResources().getConfiguration();
@@ -53,25 +61,31 @@ public class MyUtils {
             return configuration.locale;
     }
 
-    public static void updateSavedLanguage(Context context) {
+    /*Check and update saved locale
+    * Return TRUE if need to update UI
+    * Return FALSE if not need to update UI
+    */
+    public static boolean updateSavedLanguage(Context context) {
+
         SharedPreferences pref = context.getSharedPreferences(Definition.PREF_KEY_FILE, Activity.MODE_PRIVATE);
 
         String savedLangCode = pref.getString(Definition.PREF_LANGUAGE, "");
         String savedLangCountry = pref.getString(Definition.PREF_COUNTRY, "");
 
         Locale currentLocale = MyUtils.getCurrentLocale(context);
-
+        Log.d("chienpm_log", "I was locale :(");
         if(TextUtils.isEmpty(savedLangCode))
         {
             MyUtils.saveLocale(currentLocale, context);
-            return;
+            return true;
         }
         if(!currentLocale.getLanguage().equals(savedLangCode)){
             //need to change language
             Locale locale = new Locale(savedLangCode, savedLangCountry);
             MyUtils.changeLanguage(locale, context);
-
+            Log.d("chienpm_log", "I resetted locale :(");
+            return true;
         }
-
+        return false;
     }
 }

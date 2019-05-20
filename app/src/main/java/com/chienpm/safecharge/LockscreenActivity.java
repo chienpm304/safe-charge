@@ -50,8 +50,6 @@ public class LockscreenActivity extends AppCompatActivity {
     private String mNextPattern="";
     private int wrongCount = 5;
 
-    //Todo: ReDefine layout to fit all kind of device, hdpi, lpdi, mpdi, xhdpi
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,26 +118,21 @@ public class LockscreenActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(TextUtils.equals(mPrevPattern, mNextPattern)){
-                    updatePassword();
+                    MyUtils.savedNewPassword(getApplicationContext(), mNextPattern);
+                    finish();
                 }
             }
         };
     }
 
-    private void updatePassword() {
-        SharedPreferences pref = getSharedPreferences(Definition.PREF_KEY_FILE, MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(Definition.PREF_PASSWORD, mNextPattern);
-        editor.apply();
-        finish();
-    }
+
 
     //Deny Back, Volume button when in Unlock mode
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(mMode == Definition.LOCKSCREEN_UNLOCK){
             Log.d("chienpm_log_tag", "Key captured, mode = " + mMode + "key = "+keyCode);
-            Toast.makeText(this, "Aka, who know how to escape :))", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.do_not_escape, Toast.LENGTH_LONG).show();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -174,8 +167,6 @@ public class LockscreenActivity extends AppCompatActivity {
         @Override
         public void onComplete(List<PatternLockView.Dot> pattern) {
 
-
-
             if(PatternLockUtils.patternToString(mPatternLockView, pattern).length() < Definition.MIN_PATTERN_LENGTH)
             {
                 tvWarrning.setText(R.string.pattern_error);
@@ -190,6 +181,8 @@ public class LockscreenActivity extends AppCompatActivity {
                         if(isCorrectPattern(patternString)){
                             mediaPlayer.stop();
                             finish();
+                            Intent mainAct = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(mainAct);
                         }
                         else{
                             tvWarrning.setText(R.string.pattern_wrong);
@@ -327,6 +320,7 @@ public class LockscreenActivity extends AppCompatActivity {
                 leftButton.setOnClickListener(mCancelListener);
                 mStep = CHANGE_PASSWORD;
                 break;
+
             case Definition.LOCKSCREEN_SETUP_PASSWORD:
                 setTitle(R.string.choose_your_pattern);
                 mStep = SETUP_STEP1_INIT;

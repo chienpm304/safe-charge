@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,18 +32,18 @@ public class SettingActivity extends AppCompatActivity {
         mListView.setAdapter(mAdapter);
 
         MyUtils.updateSavedLanguage(this);
-        updateUiAdaptedToLanguage();
+        updateUI();
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch(position){
-                    case 0: //change password
+                    case 1: //change password
                         Intent changPasswordIntent = new Intent(getApplicationContext(), LockscreenActivity.class);
                         changPasswordIntent.putExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_CHANGE_PASSWORD);
                         startActivity(changPasswordIntent);
                         break;
-                    case 1://language
+                    case 0://language
                         Intent changeLanguageIntent = new Intent(getApplicationContext(), LanguageActivity.class);
                         startActivity(changeLanguageIntent);
                         break;
@@ -57,19 +56,19 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        MyUtils.updateSavedLanguage(this);
-        updateUiAdaptedToLanguage();
+        if(MyUtils.updateSavedLanguage(this))
+            updateUI();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        MyUtils.updateSavedLanguage(this);
-        updateUiAdaptedToLanguage();
+        if(MyUtils.updateSavedLanguage(this))
+            updateUI();
         Log.d("chienpm_log", "onResume Setting activity");
     }
 
-    private void updateUiAdaptedToLanguage() {
+    private void updateUI() {
         setTitle(R.string.settings);
         //get string array adapted to language
         mAdapter.clear();
