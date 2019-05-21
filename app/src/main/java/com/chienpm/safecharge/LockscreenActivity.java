@@ -245,6 +245,7 @@ public class LockscreenActivity extends AppCompatActivity {
                             finish();
                             Intent mainAct = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(mainAct);
+                            showInterstitial();
                         }
                         else{
                             tvWarrning.setText(R.string.pattern_wrong);
