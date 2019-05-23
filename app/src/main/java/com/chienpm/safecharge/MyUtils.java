@@ -10,6 +10,11 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+
 import java.util.Locale;
 
 public class MyUtils {
@@ -88,5 +93,28 @@ public class MyUtils {
             return true;
         }
         return false;
+    }
+
+    public static AdRequest createAdRequest(Context context) {
+        MobileAds.initialize(context, context.getString(R.string.admob_app_id));
+        return new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("E69ED7FEB84433CA8B103E6CD89C1133")
+                .build();
+    }
+
+    public static InterstitialAd createInterstitialAd(Context context) {
+        MobileAds.initialize(context, context.getString(R.string.admob_app_id));
+        InterstitialAd mInterstitialAd = new InterstitialAd(context);
+        mInterstitialAd.setAdUnitId(context.getString(R.string.interstitial_full_screen));
+
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+            }
+
+        });
+        return mInterstitialAd;
     }
 }

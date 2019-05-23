@@ -69,7 +69,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_home_footer_test" />
+        ads:adUnitId="@string/banner_home_footer" />
 
 
 </RelativeLayout>

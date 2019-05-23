@@ -92,19 +92,8 @@ public class LockscreenActivity extends AppCompatActivity {
     }
 
     private void initInterstitalAd() {
-        MobileAds.initialize(this, getString(R.string.admob_app_id));
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen_test));
-
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                // Load the next interstitial.
-//                mInterstitialAd.loadAd(new AdRequest.Builder().build());
-            }
-
-        });
+        AdRequest adRequest = MyUtils.createAdRequest(this);
+        mInterstitialAd =  MyUtils.createInterstitialAd(this);
         mInterstitialAd.loadAd(adRequest);
 
     }
@@ -355,12 +344,11 @@ public class LockscreenActivity extends AppCompatActivity {
 
     private void initBannerAdmod() {
         //Admod
-        MobileAds.initialize(this, getString(R.string.admob_app_id));
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
+        AdRequest adRequest = MyUtils.createAdRequest(this);
         mAdView.loadAd(adRequest);
     }
+
+
 
     private void setMaximumVolume() {
         AudioManager manager = (AudioManager) getSystemService(AUDIO_SERVICE);

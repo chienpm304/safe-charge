@@ -147,40 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
         mAdView = (AdView)findViewById(R.id.adView);
 
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-
-//        mAdView.setAdListener(new AdListener(){
-//
-//            @Override
-//            public void onAdLoaded() {
-//
-//            }
-//
-//            @Override
-//            public void onAdClosed() {
-//                Toast.makeText(getApplicationContext(), "Ad is closed!", Toast.LENGTH_LONG).show();
-//            }
-//
-//            @Override
-//            public void onAdFailedToLoad(int errorCode) {
-//                Toast.makeText(getApplicationContext(), "Ad failed to load! error code: " + errorCode, Toast.LENGTH_LONG).show();
-//            }
-//
-//            @Override
-//            public void onAdLeftApplication() {
-//                Toast.makeText(getApplicationContext(), "Ad left application!", Toast.LENGTH_LONG).show();
-//            }
-//
-//            @Override
-//            public void onAdOpened() {
-//                super.onAdOpened();
-//                Toast.makeText(getApplicationContext(), "Ad opened!", Toast.LENGTH_LONG).show();
-//            }
-//
-//
-//        });
+        AdRequest adRequest = MyUtils.createAdRequest(this);
 
         mAdView.loadAd(adRequest);
 

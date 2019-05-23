@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "484242586204",
+    "firebase_url": "https://safe-charging.firebaseio.com",
+    "project_id": "safe-charging",
+    "storage_bucket": "safe-charging.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:484242586204:android:d64778b012634d28",
+        "android_client_info": {
+          "package_name": "com.chienpm.safecharge"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "484242586204-du5o2ukk1iqsuo1suoktm8csau18sr6v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chienpm.safecharge",
+            "certificate_hash": "ef1a4b3a171e5e8e1686b5acff769b9ff5787e09"
+          }
+        },
+        {
+          "client_id": "484242586204-9ki279iob7stp758dicjovbb5fbiaddg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPr8Wsfl9g1V2D-f-HdEqpjj2UAt3gxHM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "484242586204-9ki279iob7stp758dicjovbb5fbiaddg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-8948680136889526~1754742363"
+    }
+  ],
+  "configuration_version": "1"
+}

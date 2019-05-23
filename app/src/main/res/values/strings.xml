@@ -60,20 +60,23 @@
         <item>@string/change_password</item>
     </string-array>
 
+    <string name="admob_app_id" translatable="false">@string/app_id_official</string>
+    <string name="banner_home_footer" translatable="false">@string/unit_id_banner_test</string>
+    <string name="interstitial_full_screen" translatable="false">@string/unit_id_interstitial_test</string>
+
+
     <!--Admod Unit Ids-->
-    <string name="admob_app_id" translatable="false">ca-app-pub-8948680136889526~2416005770</string>
-    <string name="banner_home_footer" translatable="false">ca-app-pub-8948680136889526/4575442866</string>
-    <string name="interstitial_full_screen" translatable="false">ca-app-pub-8948680136889526/4896497758</string>
+    <string name="app_id_official" translatable="false">ca-app-pub-8948680136889526~1754742363</string>
+    <string name="unit_id_banner_official" translatable="false">ca-app-pub-8948680136889526/6537608838</string>
+    <string name="unit_id_interstitial_official" translatable="false">ca-app-pub-8948680136889526/7250611620</string>
 
     <!-- -
         This is an ad unit ID for a banner test ad. Replace with your own banner ad unit id.
         For more information, see https://support.google.com/admob/answer/3052638
     <!- -->
-    <string name="admob_app_id_test" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
-    <string name="banner_home_footer_test" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="interstitial_full_screen_test" translatable="false">ca-app-pub-3940256099942544/1033173712
-
-</string>
+    <string name="app_id_test" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="unit_id_banner_test" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="unit_id_interstitial_test" translatable="false">ca-app-pub-3940256099942544/1033173712</string>
 
 
 </resources>
