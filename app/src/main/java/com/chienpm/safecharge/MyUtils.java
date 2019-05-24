@@ -96,25 +96,67 @@ public class MyUtils {
     }
 
     public static AdRequest createAdRequest(Context context) {
-        MobileAds.initialize(context, context.getString(R.string.admob_app_id));
+//        MobileAds.initialize(context, context.getString(R.string.admob_app_id));
+
         return new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .addTestDevice("E69ED7FEB84433CA8B103E6CD89C1133")
                 .build();
     }
 
+    public static AdListener createAdListener() {
+        AdListener mListenner =  new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                Log.d("chienpm_ads_log", "Ads loaded");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                Log.d("chienpm_ads_log", "Ads failed to load "+i);
+            }
+
+            @Override
+            public void onAdClosed() {
+                Log.d("chienpm_ads_log", "Ads closed");
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                super.onAdLeftApplication();
+                Log.d("chienpm_ads_log", "Ads left app");
+            }
+
+            @Override
+            public void onAdOpened() {
+                super.onAdOpened();
+                Log.d("chienpm_ads_log", "Ads opened");
+            }
+
+            @Override
+            public void onAdClicked() {
+                super.onAdClicked();
+                Log.d("chienpm_ads_log", "Ads clicked");
+            }
+
+            @Override
+            public void onAdImpression() {
+                super.onAdImpression();
+                Log.d("chienpm_ads_log", "Ads impression");
+            }
+
+        };
+        return mListenner;
+    }
+
     public static InterstitialAd createInterstitialAd(Context context) {
         MobileAds.initialize(context, context.getString(R.string.admob_app_id));
         InterstitialAd mInterstitialAd = new InterstitialAd(context);
         mInterstitialAd.setAdUnitId(context.getString(R.string.interstitial_full_screen));
-
-
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-            }
-
-        });
         return mInterstitialAd;
     }
+
+
 }

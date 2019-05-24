@@ -141,16 +141,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViews() {
         //Init Admod
-        Log.d("chienpm_log", "inited admod");
-
+        Log.d("chienpm_ads_log", "inited admod");
         MobileAds.initialize(this, getString(R.string.admob_app_id));
 
+
+        Log.d("chienpm_ads_log", "start init adview");
         mAdView = (AdView)findViewById(R.id.adView);
 
         AdRequest adRequest = MyUtils.createAdRequest(this);
+        AdListener adListener = MyUtils.createAdListener();
 
+        mAdView.setAdListener(adListener);
         mAdView.loadAd(adRequest);
 
+
+        Log.d("chienpm_ads_log", "end init adview");
 
         tvBatteryLevel = findViewById(R.id.battery_level);
         tvTemperature = findViewById(R.id.temperature_level);
