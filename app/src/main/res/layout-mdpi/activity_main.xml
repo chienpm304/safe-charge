@@ -15,11 +15,12 @@
 
     <ImageView
         android:id="@+id/imgBattery"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_width="240dp"
+        android:layout_height="240dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
-        android:src="@drawable/logo_512" />
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/ic_battery_30"
+        />
 
     <TextView
         android:id="@+id/battery_level"

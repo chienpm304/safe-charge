@@ -6,15 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -22,12 +22,15 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 public class MainActivity extends AppCompatActivity {
+    AnimationDrawable batteryAnimation;
+    ImageView imgBattery;
 
     TextView tvVoltage, tvTemperature, tvBatteryLevel;
     AdView mAdView;
 
     RunInBackgroundService mService;
     Intent mServiceIntent;
+    private boolean isCharging = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("chienpm_ads_log", "end init adview");
 
+        //Battery animation
+        imgBattery = findViewById(R.id.imgBattery);
         tvBatteryLevel = findViewById(R.id.battery_level);
         tvTemperature = findViewById(R.id.temperature_level);
         tvVoltage = findViewById(R.id.voltage_level);
@@ -168,6 +173,56 @@ public class MainActivity extends AppCompatActivity {
         tvVoltage.setText(getString(R.string.battery_voltage, voltage));
         tvTemperature.setText(getString(R.string.battery_temperature, (int)temperature/10));
         setTitle(getString(R.string.app_name));
+        updateBatteryImage();
+    }
+
+    private void updateBatteryImage() {
+        if(isCharging == false) {
+            switch (level / 10) {
+                case 0:
+                    imgBattery.setBackgroundResource(R.drawable.ic_battery_0);
+                    break;
+                case 1:
+                    imgBattery.setBackgroundResource(R.drawable.ic_battery_10);
+                    break;
+                case 2:
+                    imgBattery.setBackgroundResource(R.drawable.ic_battery_20);
+                    break;
+                case 3:
+                    imgBattery.setBackgroundResource(R.drawable.ic_battery_30);
+                    break;
+                case 4:
+                    imgBattery.setBackgroundResource(R.drawable.ic_battery_40);
+                    break;
+                case 5:
+                    imgBattery.setBackgroundResource(R.drawable.ic_battery_50);
+                    break;
+                case 6:
+                    imgBattery.setBackgroundResource(R.drawable.ic_battery_60);
+                    break;
+                case 7:
+                    imgBattery.setBackgroundResource(R.drawable.ic_battery_70);
+                    break;
+                case 8:
+                    imgBattery.setBackgroundResource(R.drawable.ic_battery_80);
+                    break;
+                case 9:
+                    imgBattery.setBackgroundResource(R.drawable.ic_battery_90);
+                    break;
+                case 10:
+                    imgBattery.setBackgroundResource(R.drawable.ic_battery_100);
+                    break;
+            }
+        }
+        else{
+            runBatteryAnimation();
+        }
+    }
+
+    private void runBatteryAnimation() {
+        imgBattery.setBackgroundResource(R.drawable.battery_animation);
+        batteryAnimation = (AnimationDrawable) imgBattery.getBackground();
+        batteryAnimation.start();
     }
 
     private void checkPasswordStatus() {
@@ -178,10 +233,16 @@ public class MainActivity extends AppCompatActivity {
             Log.d("chienpm_log", "START password activity");
         }
     }
+
     int level, voltage, temperature;
+
     private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+
+            isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING;
+
             level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
             voltage = intent.getIntExtra("voltage", 0);
             temperature = intent.getIntExtra("temperature", 0);
