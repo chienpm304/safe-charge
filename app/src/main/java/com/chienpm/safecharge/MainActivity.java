@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     RunInBackgroundService mService;
     Intent mServiceIntent;
     private boolean isCharging = false;
+    private boolean isFull = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,42 +178,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateBatteryImage() {
-        if(isCharging == false) {
-            switch (level / 10) {
-                case 0:
-                    imgBattery.setBackgroundResource(R.drawable.ic_battery_0);
-                    break;
-                case 1:
-                    imgBattery.setBackgroundResource(R.drawable.ic_battery_10);
-                    break;
-                case 2:
-                    imgBattery.setBackgroundResource(R.drawable.ic_battery_20);
-                    break;
-                case 3:
-                    imgBattery.setBackgroundResource(R.drawable.ic_battery_30);
-                    break;
-                case 4:
-                    imgBattery.setBackgroundResource(R.drawable.ic_battery_40);
-                    break;
-                case 5:
-                    imgBattery.setBackgroundResource(R.drawable.ic_battery_50);
-                    break;
-                case 6:
-                    imgBattery.setBackgroundResource(R.drawable.ic_battery_60);
-                    break;
-                case 7:
-                    imgBattery.setBackgroundResource(R.drawable.ic_battery_70);
-                    break;
-                case 8:
-                    imgBattery.setBackgroundResource(R.drawable.ic_battery_80);
-                    break;
-                case 9:
-                    imgBattery.setBackgroundResource(R.drawable.ic_battery_90);
-                    break;
-                case 10:
-                    imgBattery.setBackgroundResource(R.drawable.ic_battery_100);
-                    break;
-            }
+        if(isFull) {
+            imgBattery.setBackgroundResource(R.drawable.ic_battery_full_with_thunder);
+        }
+        else if(isCharging == false) {
+            int imgDrawableId = MyUtils.getBatteryImageWithLevel(level);
+            imgBattery.setBackgroundResource(imgDrawableId);
         }
         else{
             runBatteryAnimation();
@@ -242,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
             int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
 
             isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING;
+            isFull = status == BatteryManager.BATTERY_STATUS_FULL;
 
             level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
             voltage = intent.getIntExtra("voltage", 0);
