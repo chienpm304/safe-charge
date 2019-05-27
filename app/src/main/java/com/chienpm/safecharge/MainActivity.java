@@ -33,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean isCharging = false;
     private boolean isFull = false;
 
+    /*
+     * Activity life-cycle implementation
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,12 +53,135 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        MyUtils.setMainAtivityStatusToActive(this, Definition.STATUS_ACTIVE); //set MainActivity status to Active
+    }
+
+    @Override
+    protected void onResume() {
+        if(MyUtils.updateSavedLanguage(this))
+            updateUI();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+        registerServices();
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        checkPasswordStatus();
+        if(MyUtils.updateSavedLanguage(this))
+            updateUI();
+        super.onRestart();
+    }
+
+    @Override
+    protected void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        MyUtils.setMainAtivityStatusToActive(this, Definition.STATUS_NON_ACTIVE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterServices();
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if(MyUtils.updateSavedLanguage(this))
             updateUI();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.menu_item_setting){
+            Intent intent = new Intent(this, SettingActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+    /*
+     * Initialization
+     */
+    private void initViews() {
+        //Init Admod
+        Log.d("chienpm_ads_log", "inited admod");
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
+
+
+        Log.d("chienpm_ads_log", "start init adview");
+        mAdView = (AdView)findViewById(R.id.adView);
+
+        AdRequest adRequest = MyUtils.createAdRequest(this);
+        AdListener adListener = MyUtils.createAdListener();
+
+        mAdView.setAdListener(adListener);
+        mAdView.loadAd(adRequest);
+
+
+        Log.d("chienpm_ads_log", "end init adview");
+
+        //Battery animation
+        imgBattery = findViewById(R.id.imgBattery);
+        tvBatteryLevel = findViewById(R.id.battery_level);
+        tvTemperature = findViewById(R.id.temperature_level);
+        tvVoltage = findViewById(R.id.voltage_level);
+        checkPasswordStatus();
+    }
+
+
+    /*
+     * Update UI functions
+     */
+    private void updateUI() {
+        tvBatteryLevel.setText(getString(R.string.battery_level, level));
+        tvVoltage.setText(getString(R.string.battery_voltage, voltage));
+        tvTemperature.setText(getString(R.string.battery_temperature, (int)temperature/10));
+        setTitle(getString(R.string.app_name));
+        updateBatteryImage();
+    }
+
+    private void updateBatteryImage() {
+        if(isFull) {
+            imgBattery.setBackgroundResource(R.drawable.ic_battery_full_with_thunder);
+        }
+        else if(isCharging == false) {
+            int imgDrawableId = MyUtils.getBatteryImageWithLevel(level);
+            imgBattery.setBackgroundResource(imgDrawableId);
+        }
+        else{
+            runBatteryAnimation();
+        }
+    }
+
+    /*
+     * Helper Functions
+     */
     private void registerServices() {
         registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         mService = new RunInBackgroundService(this);
@@ -87,109 +214,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    @Override
-    protected void onResume() {
-        if(MyUtils.updateSavedLanguage(this))
-            updateUI();
-        if (mAdView != null) {
-            mAdView.resume();
-        }
-        registerServices();
-        super.onResume();
-    }
-
-    @Override
-    protected void onRestart() {
-        checkPasswordStatus();
-        if(MyUtils.updateSavedLanguage(this))
-            updateUI();
-        super.onRestart();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if(id == R.id.menu_item_setting){
-            Intent intent = new Intent(this, SettingActivity.class);
-            startActivity(intent);
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onPause() {
-        if (mAdView != null) {
-            mAdView.pause();
-        }
-        super.onPause();
-    }
-
-
-
-    @Override
-    protected void onDestroy() {
-        unregisterServices();
-        if (mAdView != null) {
-            mAdView.destroy();
-        }
-        super.onDestroy();
-    }
-
-
-
-    private void initViews() {
-        //Init Admod
-        Log.d("chienpm_ads_log", "inited admod");
-        MobileAds.initialize(this, getString(R.string.admob_app_id));
-
-
-        Log.d("chienpm_ads_log", "start init adview");
-        mAdView = (AdView)findViewById(R.id.adView);
-
-        AdRequest adRequest = MyUtils.createAdRequest(this);
-        AdListener adListener = MyUtils.createAdListener();
-
-        mAdView.setAdListener(adListener);
-        mAdView.loadAd(adRequest);
-
-
-        Log.d("chienpm_ads_log", "end init adview");
-
-        //Battery animation
-        imgBattery = findViewById(R.id.imgBattery);
-        tvBatteryLevel = findViewById(R.id.battery_level);
-        tvTemperature = findViewById(R.id.temperature_level);
-        tvVoltage = findViewById(R.id.voltage_level);
-        checkPasswordStatus();
-    }
-
-    private void updateUI() {
-        tvBatteryLevel.setText(getString(R.string.battery_level, level));
-        tvVoltage.setText(getString(R.string.battery_voltage, voltage));
-        tvTemperature.setText(getString(R.string.battery_temperature, (int)temperature/10));
-        setTitle(getString(R.string.app_name));
-        updateBatteryImage();
-    }
-
-    private void updateBatteryImage() {
-        if(isFull) {
-            imgBattery.setBackgroundResource(R.drawable.ic_battery_full_with_thunder);
-        }
-        else if(isCharging == false) {
-            int imgDrawableId = MyUtils.getBatteryImageWithLevel(level);
-            imgBattery.setBackgroundResource(imgDrawableId);
-        }
-        else{
-            runBatteryAnimation();
-        }
-    }
-
     private void runBatteryAnimation() {
         imgBattery.setBackgroundResource(R.drawable.battery_animation);
         batteryAnimation = (AnimationDrawable) imgBattery.getBackground();
@@ -204,6 +228,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d("chienpm_log", "START password activity");
         }
     }
+
+
+
+    /*
+     * Battery broadcast receiver
+     */
 
     int level, voltage, temperature;
 

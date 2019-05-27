@@ -57,6 +57,9 @@ public class LockscreenActivity extends AppCompatActivity {
     private String mNextPattern="";
     private int wrongCount = 5;
 
+    /*
+     * Activity lifecyle implementation
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,13 +68,7 @@ public class LockscreenActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mMode = intent.getIntExtra(Definition.LOCKSCREEN_MODE, Definition.LOCKSCREEN_UNLOCK);
 
-        mService = new RunInBackgroundService(this);
-        mServiceIntent = new Intent(this, mService.getClass());
-
-
-        if (!isMyServiceRunning(mService.getClass())) {
-            startService(mServiceIntent);
-        }
+        initServices();
 
         initViews();
 
@@ -87,9 +84,82 @@ public class LockscreenActivity extends AppCompatActivity {
 
         initBannerAdmod();
         initInterstitalAd();
-        initListener();
+        initListeners();
         updateScreenLayoutMode();
         MyUtils.updateSavedLanguage(this);
+    }
+
+    @Override
+    protected void onResume() {
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        unregisterListeners();
+        super.onDestroy();
+        if(mServiceIntent != null) {
+            stopService(mServiceIntent); //stop service to invoke the sevice's destroy and restart service immediately
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        MyUtils.updateSavedLanguage(this);
+    }
+
+    //Deny Back, Volume button when in Unlock mode
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(mMode == Definition.LOCKSCREEN_UNLOCK){
+            Log.d("chienpm_log_tag", "Key captured, mode = " + mMode + "key = "+keyCode);
+            Toast.makeText(this, R.string.do_not_escape, Toast.LENGTH_LONG).show();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
+    /*
+     * Initialization
+     */
+    private void initViews() {
+        mPatternLockView = (PatternLockView)findViewById(R.id.patter_lock_view);
+        mPatternLockView.addPatternLockListener(mPatternLockViewListener);
+        mAdView = findViewById(R.id.lockScreenAdview);
+        tvTittle = findViewById(R.id.tvTitle);
+        tvWarrning = findViewById(R.id.tvWarrning);
+        leftButton = findViewById(R.id.btnLeft);
+        rightButton = findViewById(R.id.btnRight);
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.alert_sound);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.setVolume(1.0f, 1.0f);
+    }
+
+    private void initServices() {
+        mService = new RunInBackgroundService(this.getApplicationContext());
+        mServiceIntent = new Intent(this.getApplicationContext(), mService.getClass());
+
+
+        if (!isMyServiceRunning(mService.getClass())) {
+            startService(mServiceIntent);
+        }
     }
 
     private void initBannerAdmod() {
@@ -119,13 +189,7 @@ public class LockscreenActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        MyUtils.updateSavedLanguage(this);
-    }
-
-    private void initListener() {
+    private void initListeners() {
         mClearListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,203 +235,21 @@ public class LockscreenActivity extends AppCompatActivity {
         };
     }
 
-
-
-    //Deny Back, Volume button when in Unlock mode
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(mMode == Definition.LOCKSCREEN_UNLOCK){
-            Log.d("chienpm_log_tag", "Key captured, mode = " + mMode + "key = "+keyCode);
-            Toast.makeText(this, R.string.do_not_escape, Toast.LENGTH_LONG).show();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-    @Override
-    protected void onResume() {
-
-        if (mAdView != null) {
-            mAdView.resume();
-        }
-        super.onResume();
+    private void unregisterListeners() {
+        leftButton.setOnClickListener(null);
+        rightButton.setOnClickListener(null);
     }
 
-    @Override
-    protected void onDestroy() {
-        if (mAdView != null) {
-            mAdView.destroy();
-        }
-        super.onDestroy();
-        stopService(mServiceIntent); //stop service to invoke the sevice's destroy and restart service immediately
-    }
-
-    @Override
-    protected void onPause() {
-        if (mAdView != null) {
-            mAdView.pause();
-        }
-        super.onPause();
-    }
-
-    private PatternLockView mPatternLockView;
-
-    private PatternLockViewListener mPatternLockViewListener = new PatternLockViewListener() {
-        @Override
-        public void onStarted() {
-        }
-
-        @Override
-        public void onProgress(List<PatternLockView.Dot> progressPattern) {
-            if(mMode == Definition.LOCKSCREEN_SETUP_PASSWORD)
-                tvWarrning.setText("");
-            if(mStep == SETUP_STEP1_INIT)
-            {
-                mStep = SETUP_STEP1_DRAWING; updateNavigationUI();
-            }
-            else if(mStep == SETUP_STEP2_INIT){
-                mStep = SETUP_STEP2_DRAWING; updateNavigationUI();
-            }
-        }
-
-
-        @Override
-        public void onComplete(List<PatternLockView.Dot> pattern) {
-
-            if(PatternLockUtils.patternToString(mPatternLockView, pattern).length() < Definition.MIN_PATTERN_LENGTH)
-            {
-                tvWarrning.setText(R.string.pattern_error);
-                wrongCount--;
-                pattern.clear();
-            }
-            else{
-                String patternString = PatternLockUtils.patternToMD5(mPatternLockView, pattern);
-                Log.d("chienpm_log_tag", "drawn: "+ patternString);
-                switch (mMode){
-                    case Definition.LOCKSCREEN_UNLOCK:
-                        if(isCorrectPattern(patternString)){
-                            mediaPlayer.stop();
-                            finish();
-                            Intent mainAct = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(mainAct);
-                            showInterstitial();
-                        }
-                        else{
-                            tvWarrning.setText(R.string.pattern_wrong);
-                            pattern.clear();
-                        }
-
-                        break;
-                    case Definition.LOCKSCREEN_CHANGE_PASSWORD:
-                        //check pass
-                        if(isCorrectPattern(patternString)){
-                            mMode = Definition.LOCKSCREEN_SETUP_PASSWORD;
-                            mStep = SETUP_STEP1_INIT;
-                            pattern.clear();
-                            reloadUI();
-                            updateScreenLayoutMode();
-                        }else{
-                            tvWarrning.setText(R.string.pattern_wrong);
-                            wrongCount--;
-                            if(wrongCount < 4)
-                                tvWarrning.setText(getString(R.string.pattern_attempts_left, wrongCount));
-                            if(wrongCount < 1)
-                                finish();
-                        }
-                        break;
-                    case Definition.LOCKSCREEN_SETUP_PASSWORD:
-                        if(mStep == SETUP_STEP1_DRAWING){
-                            mPrevPattern = patternString;
-                            mStep = SETUP_STEP1_DRAWN;
-                        }
-                        else if(mStep == SETUP_STEP2_DRAWING){
-                            mNextPattern = patternString;
-                            if(TextUtils.equals(mPrevPattern, mNextPattern))
-                                mStep++;
-                            else{
-                                tvWarrning.setText(R.string.pattern_wrong);
-                                pattern.clear();
-                                mStep = SETUP_STEP2_INIT;
-                                mNextPattern = "";
-                            }
-                        }
-                        updateNavigationUI();
-                        break;
-                }
-            }
-        }
-
-        @Override
-        public void onCleared() {
-
-        }
-    };
+    /*
+     * Update UI functions
+     */
 
     private void reloadUI() {
         setContentView(R.layout.activity_lockscreen);
         initViews();
-        initListener();
+        initListeners();
         updateScreenLayoutMode();
     }
-
-    private boolean isCorrectPattern(String patternString) {
-        String password = getSharedPreferences(Definition.PREF_KEY_FILE, MODE_PRIVATE).getString(Definition.PREF_PASSWORD, "");
-        return TextUtils.equals(patternString, password);
-    }
-
-    private void startCountDown() {
-        timer = new CountDownTimer(10000, 1000) {
-            @Override
-            public void onTick(long l) {
-                tvWarrning.setText(getString(R.string.alert_in, l/1000));
-            }
-
-            @Override
-            public void onFinish() {
-                tvWarrning.setText(R.string.thief_detected);
-                setMaximumVolume();
-                mediaPlayer.start();
-            }
-        }.start();
-    }
-
-
-    private boolean isMyServiceRunning(Class<? extends RunInBackgroundService> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.i ("isMyServiceRunning?", true+"");
-                return true;
-            }
-        }
-        Log.i ("isMyServiceRunning?", false+"");
-        return false;
-    }
-
-    private void initViews() {
-        mPatternLockView = (PatternLockView)findViewById(R.id.patter_lock_view);
-        mPatternLockView.addPatternLockListener(mPatternLockViewListener);
-        mAdView = findViewById(R.id.lockScreenAdview);
-        tvTittle = findViewById(R.id.tvTitle);
-        tvWarrning = findViewById(R.id.tvWarrning);
-        leftButton = findViewById(R.id.btnLeft);
-        rightButton = findViewById(R.id.btnRight);
-
-        mediaPlayer = MediaPlayer.create(this, R.raw.alert_sound);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.setVolume(1.0f, 1.0f);
-    }
-
-    private void setMaximumVolume() {
-        AudioManager manager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        int media_max_volume = manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-
-        manager.setStreamVolume(
-                AudioManager.STREAM_MUSIC, // Stream type
-                media_max_volume, // Index
-                AudioManager.FLAG_VIBRATE // Flags
-        );
-    }
-
 
     private void updateScreenLayoutMode() {
         switch (mMode){
@@ -452,4 +334,152 @@ public class LockscreenActivity extends AppCompatActivity {
                 break;
         }
     }
+
+
+    /*
+     * Drawing pattern processing
+     */
+    private PatternLockView mPatternLockView;
+
+    private PatternLockViewListener mPatternLockViewListener = new PatternLockViewListener() {
+        @Override
+        public void onStarted() {
+        }
+
+        @Override
+        public void onProgress(List<PatternLockView.Dot> progressPattern) {
+            if(mMode == Definition.LOCKSCREEN_SETUP_PASSWORD)
+                tvWarrning.setText("");
+            if(mStep == SETUP_STEP1_INIT)
+            {
+                mStep = SETUP_STEP1_DRAWING; updateNavigationUI();
+            }
+            else if(mStep == SETUP_STEP2_INIT){
+                mStep = SETUP_STEP2_DRAWING; updateNavigationUI();
+            }
+        }
+
+
+        @Override
+        public void onComplete(List<PatternLockView.Dot> pattern) {
+
+            if(PatternLockUtils.patternToString(mPatternLockView, pattern).length() < Definition.MIN_PATTERN_LENGTH)
+            {
+                tvWarrning.setText(R.string.pattern_error);
+                wrongCount--;
+                pattern.clear();
+            }
+            else{
+                String patternString = PatternLockUtils.patternToMD5(mPatternLockView, pattern);
+                Log.d("chienpm_log_tag", "drawn: "+ patternString);
+                switch (mMode){
+                    case Definition.LOCKSCREEN_UNLOCK:
+                        if(isCorrectPattern(patternString)){
+                            mediaPlayer.stop();
+                            finish();
+                            Intent mainAct = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(mainAct);
+                            showInterstitial();
+                        }
+                        else{
+                            tvWarrning.setText(R.string.pattern_wrong);
+                            pattern.clear();
+                        }
+
+                        break;
+                    case Definition.LOCKSCREEN_CHANGE_PASSWORD:
+                        //check pass
+                        if(isCorrectPattern(patternString)){
+                            mMode = Definition.LOCKSCREEN_SETUP_PASSWORD;
+                            mStep = SETUP_STEP1_INIT;
+                            pattern.clear();
+                            unregisterListeners();
+                            reloadUI();
+                            updateScreenLayoutMode();
+                        }else{
+                            tvWarrning.setText(R.string.pattern_wrong);
+                            wrongCount--;
+                            if(wrongCount < 4)
+                                tvWarrning.setText(getString(R.string.pattern_attempts_left, wrongCount));
+                            if(wrongCount < 1)
+                                finish();
+                        }
+                        break;
+                    case Definition.LOCKSCREEN_SETUP_PASSWORD:
+                        if(mStep == SETUP_STEP1_DRAWING){
+                            mPrevPattern = patternString;
+                            mStep = SETUP_STEP1_DRAWN;
+                        }
+                        else if(mStep == SETUP_STEP2_DRAWING){
+                            mNextPattern = patternString;
+                            if(TextUtils.equals(mPrevPattern, mNextPattern))
+                                mStep++;
+                            else{
+                                tvWarrning.setText(R.string.pattern_wrong);
+                                pattern.clear();
+                                mStep = SETUP_STEP2_INIT;
+                                mNextPattern = "";
+                            }
+                        }
+                        updateNavigationUI();
+                        break;
+                }
+            }
+        }
+
+        @Override
+        public void onCleared() {
+
+        }
+    };
+
+
+    /*
+     * Helper functions
+     */
+
+    private boolean isCorrectPattern(String patternString) {
+        String password = getSharedPreferences(Definition.PREF_KEY_FILE, MODE_PRIVATE).getString(Definition.PREF_PASSWORD, "");
+        return TextUtils.equals(patternString, password);
+    }
+
+    private void startCountDown() {
+        timer = new CountDownTimer(10000, 1000) {
+            @Override
+            public void onTick(long l) {
+                tvWarrning.setText(getString(R.string.alert_in, l/1000));
+            }
+
+            @Override
+            public void onFinish() {
+                tvWarrning.setText(R.string.thief_detected);
+                setMaximumVolume();
+                mediaPlayer.start();
+            }
+        }.start();
+    }
+
+    private boolean isMyServiceRunning(Class<? extends RunInBackgroundService> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i ("isMyServiceRunning?", true+"");
+                return true;
+            }
+        }
+        Log.i ("isMyServiceRunning?", false+"");
+        return false;
+    }
+
+    private void setMaximumVolume() {
+        AudioManager manager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int media_max_volume = manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+        manager.setStreamVolume(
+                AudioManager.STREAM_MUSIC, // Stream type
+                media_max_volume, // Index
+                AudioManager.FLAG_VIBRATE // Flags
+        );
+    }
+
 }

@@ -15,4 +15,8 @@ class Definition {
 
     public static final int MIN_PATTERN_LENGTH = 4;
     public static final String PREF_COUNTRY = "pref_country";
+    public static final String PREF_MAIN_ACTIVITY_STATUS = "pref_main_activity_status";
+    public static final boolean STATUS_ACTIVE = true;
+    public static final boolean STATUS_NON_ACTIVE = false;
+
 }

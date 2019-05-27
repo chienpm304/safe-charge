@@ -96,9 +96,12 @@ public class RunInBackgroundService extends Service {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Intent.ACTION_POWER_CONNECTED)) {
                 Log.d("chienpm_log_tag", "Power connected!");
-                Intent intent2 = new Intent(getApplicationContext(), MainActivity.class);
-                intent2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent2);
+                //Todo: need to check if the MainActivity is runnung or not
+                if(MyUtils.checkIfMainActivityIsActive(context) == Definition.STATUS_NON_ACTIVE){
+                    Intent intent2 = new Intent(getApplicationContext(), MainActivity.class);
+                    intent2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent2);
+                }
             }
             else if(intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED)) {
                 Log.d("chienpm_log_tag", "Power disconnected!");

@@ -60,6 +60,10 @@
 -keep interface com.yourideatoreality.model.** { *; }
 -keep class com.bluetapestudio.** { *; }
 -keep interface com.bluetapestudio.** { *; }
+
+-keep class org.eclipse.mat.** { *; }
+-keep class com.squareup.leakcanary.** { *; }
+
 # Suppress warnings if you are NOT using IAP:
 -dontwarn com.nnacres.app.**
 -dontwarn com.androidquery.**

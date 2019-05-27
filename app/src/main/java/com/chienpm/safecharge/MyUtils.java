@@ -2,7 +2,6 @@ package com.chienpm.safecharge;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -13,7 +12,6 @@ import android.util.Log;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
 
 import java.util.Locale;
 
@@ -152,7 +150,7 @@ public class MyUtils {
     }
 
     public static InterstitialAd createInterstitialAd(Context context) {
-        MobileAds.initialize(context, context.getString(R.string.admob_app_id));
+//        MobileAds.initialize(context, context.getString(R.string.admob_app_id));
         InterstitialAd mInterstitialAd = new InterstitialAd(context);
         mInterstitialAd.setAdUnitId(context.getString(R.string.interstitial_full_screen));
         return mInterstitialAd;
@@ -183,5 +181,23 @@ public class MyUtils {
                 return R.drawable.ic_battery_90;
         }
         return R.drawable.ic_battery_100;
+    }
+
+    public static boolean checkIfMainActivityIsActive(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(Definition.PREF_KEY_FILE, Activity.MODE_PRIVATE);
+        Boolean isActive = pref.getBoolean(Definition.PREF_MAIN_ACTIVITY_STATUS, false);
+        return isActive;
+    }
+
+    /*
+     * Set flag to check if the Main Activity is running or not
+     * status: true - running, false - not running
+     */
+    public static void setMainAtivityStatusToActive(Context context, boolean status){
+        SharedPreferences pref = context.getSharedPreferences(Definition.PREF_KEY_FILE, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(Definition.PREF_MAIN_ACTIVITY_STATUS, status);
+        editor.apply();
+        editor.commit();
     }
 }
